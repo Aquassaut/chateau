@@ -1,3 +1,12 @@
+/**
+ * Projet d'algorithmique et programmation numero 1
+ * "Jeu des châteaux"
+ * 
+ * Jérémy Autran - S1A1
+ * repo git privé : https://github.com/Aquassaut/chateau.git
+ */
+
+
 #include <math.h>
 #include <string>
 #include <iostream>
