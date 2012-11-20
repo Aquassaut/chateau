@@ -3,3 +3,5 @@ DrawingWindow*
 *test*
 Makefile
 *.o
+chateau
+*.swp
