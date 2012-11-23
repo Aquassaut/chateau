@@ -22,7 +22,7 @@ using namespace std;
 void setUpVent();
 void setUpColine();
 void setUpVariables();
-void exemple1(DrawingWindow &w);
+void jeu(DrawingWindow &w);
 
 //Implémentation des fonctions
 int main() {
