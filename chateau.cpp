@@ -15,7 +15,6 @@
 #include <cstdlib> //Pour générer un nombre pseudo-aléatoire
 #include <time.h> //Pour initialiser le randomizer
 
-
 //Namespace
 using namespace std;
 
@@ -28,10 +27,19 @@ void fenetreDeJeu(DrawingWindow&);
 void chatBowser(DrawingWindow&);
 void chatMario(DrawingWindow&);
 
+/*BLOC NOTE
+* On a deux chateaux, un en (-p, 0), un en (p, 0)
+* On a une colline au milieu, sa courbe vaut : y = randHauteur*(1-On a du vent pow((2x/randLargeur, 2)))
+* on a un vent de valeur random entre -ventMax et ventMax
+* Ca devrait être suivante pour savoir quelles variables locales on va devoir créer :
+* On aura donc une fonction qui va garder les variables locales, après création par des fonction spécifiques
+*
+* rand() donne un gros nombre, genre 9 chiffres
+*
+*
+*/
+
 //Implémentation des fonctions
-
-
-
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
@@ -41,7 +49,6 @@ int main(int argc, char *argv[])
     application.exec();
     return 0;
 }
-
 
 void fenetreDeJeu(DrawingWindow &w) {
     staticEnv(w); //Dessine l'environnement statique (bckg, colline, chateaux)
@@ -56,6 +63,8 @@ void staticEnv(DrawingWindow &w) {
     colline(w); //dessine la colline
     chatBowser(w);
     chatMario(w);
+
+
     setUpVent();
 }
 
@@ -72,18 +81,14 @@ void colline(DrawingWindow &w) {
             }
         }
     }
-
-
 }
 
 void collineRand(float& largeur, float& hauteur) {
     int hauteurMin = 80, hauteurMax = 300; //CONFIG
     int largeurMin = 50, largeurMax = 200; //CONFIG
-
     //On cherche à obtenir deux valeurs, entre min et max, du coup, on prend une valeur
     //entre 0 et la range disponible (max - min) avec le modulo, et on lui ajoute min
     //de façon à avoir une valeur aléatoire entre min et max
-
     hauteur = hauteurMin + (rand() % (hauteurMax - hauteurMin));
     largeur = largeurMin + (rand() % (largeurMax - largeurMin));
     cout << "la hauteur vaut : " << hauteur << endl; //DEBUG
@@ -92,23 +97,14 @@ void collineRand(float& largeur, float& hauteur) {
 
 void setUpVent() {
     int ventMax = 50; //CONFIG
-
     //On cherche à obtenir une valeur entre -ventMax et ventMax, du coup
     //on prend une valeur entre 0 et ventMax avec le modulo, et on lui affecte un signe
     //en multipliant cette valeur par -1 exposant rand(). Si rand est pair, on aura -1*total;
     //Si rand est impair, on aura 1*total
-    
     int vent = (rand() % ventMax) * (pow(-1, rand()));
     cout << "le vent vaut : " << vent << endl; // DEBUG
 }
 
-// On a deux chateaux, un en (-p, 0), un en (p, 0)
-// On a une colline au milieu, sa courbe vaut : y = randHauteur*(1-On a du vent pow((2x/randLargeur, 2)))
-// on a un vent de valeur random entre -ventMax et ventMax
-// Ca devrait être suivante pour savoir quelles variables locales on va devoir créer :
-// On aura donc une fonction qui va garder les variables locales, après création par des fonction spécifiques
-//
-//rand() donne un gros nombre, genre 9 chiffres
 
 void chatBowser(DrawingWindow &w) {
     //poutre
@@ -158,7 +154,6 @@ void chatBowser(DrawingWindow &w) {
 }
 
 void chatMario(DrawingWindow &w) {
-
     //poteau
     w.setColor("silver");
     w.fillRect( w.width-60+5, w.height-40+6, w.width-60+6, w.height-40+35);
@@ -181,5 +176,4 @@ void chatMario(DrawingWindow &w) {
     w.fillRect( w.width-60+29, w.height-40+18, w.width-60+31, w.height-40+24);
     //porte
     w.fillRect( w.width-60+22, w.height-40+31, w.width-60+28, w.height-40+39);
-
 }
