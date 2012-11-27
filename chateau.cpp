@@ -27,6 +27,9 @@ void staticEnv(DrawingWindow&);
 void fenetreDeJeu(DrawingWindow&);
 void chatBowser(DrawingWindow&);
 void chatMario(DrawingWindow&);
+bool playerMove(bool);
+void prompt(int&, int&); 
+
 
 //Implémentation des fonctions
 
@@ -44,10 +47,23 @@ int main(int argc, char *argv[])
 
 
 void fenetreDeJeu(DrawingWindow &w) {
-    staticEnv(w); //Dessine l'environnement statique (bckg, colline, chateaux)
     //la largeur vaut 640
     //la hauteur vaut 480   
+    int compteur = 1; // Son mod 2 donnera le numéro du joueur
+    bool victoire = false; //pourra faire sortir de la boucle en cas de victoire
+    staticEnv(w); //Dessine l'environnement statique (bckg, colline, chateaux)
+    while(!victoire) {
+        compteur +=1;
+        cout << "A votre tour de joueur, Player " << compteur%2+1 << endl;
+        victoire = playerMove(!!(compteur%2));
+    }
 }
+
+bool playerMove(bool p1) {
+    int angle, force;
+    prompt(angle, force);
+}
+
 
 void staticEnv(DrawingWindow &w) {
     w.setBgColor("powderblue");
@@ -72,8 +88,6 @@ void colline(DrawingWindow &w) {
             }
         }
     }
-
-
 }
 
 void collineRand(float& largeur, float& hauteur) {
@@ -182,4 +196,25 @@ void chatMario(DrawingWindow &w) {
     //porte
     w.fillRect( w.width-60+22, w.height-40+31, w.width-60+28, w.height-40+39);
 
+}
+
+void prompt(int& angle, int& force) {
+    bool erreur = 0;
+    cout << "Entrez un angle" << endl;
+    do {
+        if (erreur)
+            cout << "Cet angle n'est pas valide. Entrez-en un autre" << endl;
+        cin >> angle;
+        erreur ++;
+    }
+    while(angle > 90 || angle < 0);
+    erreur = 0;
+    cout << "Entrez une force en pourcent" << endl;
+    do {
+        if (erreur)
+            cout << "Cette force n'est pas valide. Entrez-en une autre" << endl;
+        cin >> force;
+        erreur ++;
+    }
+    while(force > 100 || force < 0);
 }
