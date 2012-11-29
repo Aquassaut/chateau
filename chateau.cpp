@@ -15,12 +15,11 @@
 #include <cstdlib> //Pour générer un nombre pseudo-aléatoire
 #include <time.h> //Pour initialiser le randomizer
 
-
 //Namespace
 using namespace std;
 
 //Prototypes des fonctions
-void setUpVent();
+void setUpVent(DrawingWindow&);
 void colline(DrawingWindow&);
 void collineRand(float&, float&);
 void staticEnv(DrawingWindow&);
@@ -29,11 +28,9 @@ void chatBowser(DrawingWindow&);
 void chatMario(DrawingWindow&);
 bool playerMove(bool);
 void prompt(int&, int&); 
-
+int ventRand();
 
 //Implémentation des fonctions
-
-
 
 int main(int argc, char *argv[])
 {
@@ -64,7 +61,6 @@ bool playerMove(bool p1) {
     prompt(angle, force);
 }
 
-
 void staticEnv(DrawingWindow &w) {
     w.setBgColor("powderblue");
     w.clearGraph();
@@ -72,7 +68,7 @@ void staticEnv(DrawingWindow &w) {
     colline(w); //dessine la colline
     chatBowser(w);
     chatMario(w);
-    setUpVent();
+    setUpVent(w);
 }
 
 void colline(DrawingWindow &w) {
@@ -105,15 +101,22 @@ void collineRand(float& largeur, float& hauteur) {
 }
 
 void setUpVent() {
-    int ventMax = 50; //CONFIG
+    int vent = ventRand();
+    cout << "le vent vaut : " << vent << endl; // DEBUG
+    w.setColor("black");
+    if (vent < 0) {
+        //TODO
+    }
+}
 
+int ventRand() {
+    int ventMax = 50; //CONFIG
     //On cherche à obtenir une valeur entre -ventMax et ventMax, du coup
     //on prend une valeur entre 0 et ventMax avec le modulo, et on lui affecte un signe
     //en multipliant cette valeur par -1 exposant rand(). Si rand est pair, on aura -1*total;
     //Si rand est impair, on aura 1*total
-    
     int vent = (rand() % ventMax) * (pow(-1, rand()));
-    cout << "le vent vaut : " << vent << endl; // DEBUG
+    return vent;
 }
 
 // On a deux chateaux, un en (-p, 0), un en (p, 0)
