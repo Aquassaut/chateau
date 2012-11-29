@@ -29,6 +29,7 @@ void chatMario(DrawingWindow&);
 bool playerMove(bool);
 void prompt(int&, int&); 
 int ventRand();
+void barreBas(DrawingWindow&);
 
 
 /*BLOC NOTE
@@ -74,9 +75,10 @@ bool playerMove(bool p1) {
 }
 
 void staticEnv(DrawingWindow &w) {
-    w.setBgColor("powderblue");
+    w.setBgColor("lightcyan");
     w.clearGraph();
     srand(time(NULL)); //Initialise le random
+    barreBas(w);
     colline(w); //dessine la colline
     chatBowser(w);
     chatMario(w);
@@ -85,14 +87,16 @@ void staticEnv(DrawingWindow &w) {
 
 void colline(DrawingWindow &w) {
     float larg, haut;
+    int offHaut = w.height-31;
     collineRand(larg, haut);
     w.setColor("sienna");
     for (int x = -w.width/2; x <= w.width/2; x+=1) { //x
         for (int y = w.height; y > 0; y-=1) { //y
             if ((haut*(1-(2*x/larg)*(2*x/larg))) > y) { 
-                w.drawLine((x+(w.width/2)), (w.height-y),(x+(w.width/2)), w.height); 
+                w.drawLine(x+w.width/2, offHaut-y, x+w.width/2, offHaut); 
+                //w.drawLine(x+w.width/2, w.height-y, x+w.width/2, w.height); 
                 //cout << "J'ai dessiné une ligne sous " << (x+(w.width/2)) << "," << (w.height-y) << endl;
-                y = 0;
+                y = 0; //next x
             }
         }
     }
@@ -115,15 +119,15 @@ void setUpVent(DrawingWindow &w) {
     cout << "le vent vaut : " << vent << endl; // DEBUG
     w.setColor("black");
     //Partie horizontale de la flèche sur 30 pixels
-    w.drawLine(w.width/2-15, w.height-30, w.width/2+15, w.height-30);
+    w.drawLine(w.width/2-15, w.height-60, w.width/2+15, w.height-60);
     //Vent vers la gauche
     if (vent < 0) {
-        w.drawLine(w.width/2-15, w.height-30, w.width/2-10, w.height-35);
-        w.drawLine(w.width/2-15, w.height-30, w.width/2-10, w.height-25);
+        w.drawLine(w.width/2-15, w.height-60, w.width/2-10, w.height-65);
+        w.drawLine(w.width/2-15, w.height-60, w.width/2-10, w.height-55);
     }
     else {
-        w.drawLine(w.width/2+15, w.height-30, w.width/2+10, w.height-35);
-        w.drawLine(w.width/2+15, w.height-30, w.width/2+10, w.height-25);
+        w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-65);
+        w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-55);
     }
 }
 
@@ -138,15 +142,23 @@ int ventRand() {
 }
 
 
+void barreBas(DrawingWindow& w) {
+    w.setColor("darkslategrey");
+    w.fillRect(0, w.height, w.width, w.height-29);
+}
+
+
 void chatBowser(DrawingWindow &w) {
-    int offHaut = w.height-40; //L'ordonnée la plus en haut pour dessiner les chateaux
+    int offHaut = w.height-70; //L'ordonnée la plus en haut pour dessiner les chateaux
     int offDroite = 20; //L'abscisse des points les plus à droite du chateau
     //poutre
-    w.setColor("silver");
+    w.setColor("darkgrey");
     w.fillRect(offDroite+16, offHaut+00, offDroite+17, offHaut+14);
     //drapeau
     w.setColor("darkred");
-    w.fillTriangle(offDroite+15, offHaut+01, offDroite+11, offHaut+01, offDroite+15, offHaut+05);
+    w.fillTriangle(offDroite+15, offHaut+1,
+                   offDroite+11, offHaut+1,
+                   offDroite+15, offHaut+5);
     //partie haute
     w.setColor("dimgray");
     w.fillRect(offDroite+7, offHaut+12, offDroite+9, offHaut+27);
@@ -169,7 +181,7 @@ void chatBowser(DrawingWindow &w) {
     w.fillRect(offDroite+10, offHaut+21, offDroite+15, offHaut+27);
     w.fillRect(offDroite+25, offHaut+21, offDroite+30, offHaut+27);
     //partie basse
-    w.setColor("silver");
+    w.setColor("darkgrey");
     w.fillRect(offDroite+0, offHaut+25, offDroite+1, offHaut+27);
     w.fillRect(offDroite+5, offHaut+25, offDroite+7, offHaut+27);
     w.fillRect(offDroite+12, offHaut+25, offDroite+14, offHaut+27);
@@ -188,17 +200,19 @@ void chatBowser(DrawingWindow &w) {
 }
 
 void chatMario(DrawingWindow &w) {
-    int offHaut = w.height-40; //L'ordonnée la plus en haut pour dessiner les chateaux
+    int offHaut = w.height-70; //L'ordonnée la plus en haut pour dessiner les chateaux
     int offDroite = w.width-60; //L'abscisse des points les plus à droite du chateau
     //poteau
-    w.setColor("silver");
+    w.setColor("darkgrey");
     w.fillRect(offDroite+5, offHaut+6, offDroite+6, offHaut+35);
     w.fillRect(offDroite+4, offHaut+36, offDroite+7, offHaut+39);
     //drapeau
     w.setColor("blue");
-    w.fillTriangle(offDroite+0, offHaut+7, offDroite+4, offHaut+7, offDroite+4, offHaut+11);
+    w.fillTriangle(offDroite+0, offHaut+7,
+                   offDroite+4, offHaut+7,
+                   offDroite+4, offHaut+11);
     //petits rectangles
-    w.setColor("silver");
+    w.setColor("darkgrey");
     w.fillRect(offDroite+10, offHaut+24, offDroite+40, offHaut+39);
     w.fillRect(offDroite+16, offHaut+14, offDroite+34, offHaut+23);
     w.fillRect(offDroite+10, offHaut+22, offDroite+13, offHaut+23);
@@ -219,18 +233,18 @@ void prompt(int& angle, int& force) {
     cout << "Entrez un angle" << endl;
     do {
         if (erreur)
-            cout << "Cet angle n'est pas valide. Entrez-en un autre" << endl;
+            cout << "Cet angle n'est pas valide, recommencez" << endl;
         cin >> angle;
-        erreur ++;
+        erreur += 1;
     }
     while(angle > 90 || angle < 0);
     erreur = 0;
     cout << "Entrez une force en pourcent" << endl;
     do {
         if (erreur)
-            cout << "Cette force n'est pas valide. Entrez-en une autre" << endl;
+            cout << "Cette force n'est pas valide, recommencez" << endl;
         cin >> force;
-        erreur ++;
+        erreur += 1;
     }
     while(force > 100 || force < 0);
 }
