@@ -21,7 +21,7 @@ using namespace std;
 //constantes
 #define GRAV 9.81
 #define KFROT 0.001
-#define REFRESH 0.1
+#define REFRESH 0.05
 #define VENT_MAX 10
 
 //Prototypes des fonctions
@@ -94,11 +94,11 @@ bool playerMove(int player, int vVent, DrawingWindow &w) {
 //    coord[1] = w.height-71; //ordonnée initialle : juste au dessus du drapeau
     coord[1] = 71;
     if (player == 1) {
-        coord[0] = -282; //38; //juste à droite de l'abs du drapeau de Bowser
+        coord[0] = -w.width/2+38; //38; //juste à droite de l'abs du drapeau de Bowser
 
     }
     else {
-        coord[0] = 245;//w.width-55; //juste à gauche de l'abs du drapeau de Mario
+        coord[0] = w.width/2-55; //juste à gauche de l'abs du drapeau de Mario
     }
     w.setColor("black");
     while(collision == 0) {
@@ -109,7 +109,7 @@ bool playerMove(int player, int vVent, DrawingWindow &w) {
         //calcul de la nouvelle position
         nPosition(coord, vitesse, vVent, player);
         //attendre avant le prochain refresh
-        w.msleep(50);
+        w.msleep(20);
     } 
     return victoire;
 }
@@ -146,6 +146,7 @@ void nPosition(float p[], float v[], int vVent, int player) {
     }
     else {
         p[0] -= v[0] * REFRESH;
+        vVent = -vVent;
     }
     //update des vitesses prises en compte à la prochaine itération
     v[0] += (REFRESH * (-KFROT * (vr) * (v[0] - vVent)));
