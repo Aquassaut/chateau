@@ -32,16 +32,16 @@ int ventRand();
 
 
 /*BLOC NOTE
-* On a deux chateaux, un en (-p, 0), un en (p, 0)
-* On a une colline au milieu, sa courbe vaut : y = randHauteur*(1-On a du vent pow((2x/randLargeur, 2)))
-* on a un vent de valeur random entre -ventMax et ventMax
-* Ca devrait être suivante pour savoir quelles variables locales on va devoir créer :
-* On aura donc une fonction qui va garder les variables locales, après création par des fonction spécifiques
-*
-* rand() donne un gros nombre, genre 9 chiffres
-*
-*
-*/
+ * On a deux chateaux, un en (-p, 0), un en (p, 0)
+ * On a une colline au milieu, sa courbe vaut : y = randHauteur*(1-On a du vent pow((2x/randLargeur, 2)))
+ * on a un vent de valeur random entre -ventMax et ventMax
+ * Ca devrait être suivante pour savoir quelles variables locales on va devoir créer :
+ * On aura donc une fonction qui va garder les variables locales, après création par des fonction spécifiques
+ *
+ * rand() donne un gros nombre, genre 9 chiffres
+ *
+ *
+ */
 
 //Implémentation des fonctions
 int main(int argc, char *argv[])
@@ -114,8 +114,16 @@ void setUpVent(DrawingWindow &w) {
     int vent = ventRand();
     cout << "le vent vaut : " << vent << endl; // DEBUG
     w.setColor("black");
+    //Partie horizontale de la flèche sur 30 pixels
+    w.drawLine(w.width/2-15, w.height-30, w.width/2+15, w.height-30);
+    //Vent vers la gauche
     if (vent < 0) {
-        //TODO
+        w.drawLine(w.width/2-15, w.height-30, w.width/2-10, w.height-35);
+        w.drawLine(w.width/2-15, w.height-30, w.width/2-10, w.height-25);
+    }
+    else {
+        w.drawLine(w.width/2+15, w.height-30, w.width/2+10, w.height-35);
+        w.drawLine(w.width/2+15, w.height-30, w.width/2+10, w.height-25);
     }
 }
 
@@ -131,75 +139,79 @@ int ventRand() {
 
 
 void chatBowser(DrawingWindow &w) {
+    int offHaut = w.height-40; //L'ordonnée la plus en haut pour dessiner les chateaux
+    int offDroite = 20; //L'abscisse des points les plus à droite du chateau
     //poutre
     w.setColor("silver");
-    w.fillRect(20+16, w.height-40+00, 20+17, w.height-40+14);
+    w.fillRect(offDroite+16, offHaut+00, offDroite+17, offHaut+14);
     //drapeau
     w.setColor("darkred");
-    w.fillTriangle(20+15, w.height-40+01, 20+11, w.height-40+01, 20+15, w.height-40+05);
+    w.fillTriangle(offDroite+15, offHaut+01, offDroite+11, offHaut+01, offDroite+15, offHaut+05);
     //partie haute
     w.setColor("dimgray");
-    w.fillRect(20+7, w.height-40+12, 20+9, w.height-40+27);
-    w.fillRect(20+31, w.height-40+12, 20+33, w.height-40+27);
-    w.fillRect(20+13, w.height-40+12, 20+16, w.height-40+14);
-    w.fillRect(20+24, w.height-40+12, 20+27, w.height-40+14);
-    w.fillRect(20+10, w.height-40+15, 20+30, w.height-40+37);
+    w.fillRect(offDroite+7, offHaut+12, offDroite+9, offHaut+27);
+    w.fillRect(offDroite+31, offHaut+12, offDroite+33, offHaut+27);
+    w.fillRect(offDroite+13, offHaut+12, offDroite+16, offHaut+14);
+    w.fillRect(offDroite+24, offHaut+12, offDroite+27, offHaut+14);
+    w.fillRect(offDroite+10, offHaut+15, offDroite+30, offHaut+37);
     //fenetres
     w.setColor("black");
-    w.drawPoint(20+10, w.height-40+16);
-    w.drawPoint(20+30, w.height-40+16);
-    w.drawPoint(20+27, w.height-40+18);
-    w.drawPoint(20+13, w.height-40+18);
-    w.drawLine(20+11, w.height-40+17, 20+12, w.height-40+17);
-    w.drawLine(20+28, w.height-40+17, 20+29, w.height-40+17);
-    w.drawLine(20+12, w.height-40+19, 20+13, w.height-40+19);
-    w.drawLine(20+27, w.height-40+19, 20+28, w.height-40+19);
-    w.drawLine(20+11, w.height-40+20, 20+14, w.height-40+20);
-    w.drawLine(20+26, w.height-40+20, 20+29, w.height-40+20);
-    w.fillRect(20+10, w.height-40+21, 20+15, w.height-40+27);
-    w.fillRect(20+25, w.height-40+21, 20+30, w.height-40+27);
+    w.drawPoint(offDroite+10, offHaut+16);
+    w.drawPoint(offDroite+30, offHaut+16);
+    w.drawPoint(offDroite+27, offHaut+18);
+    w.drawPoint(offDroite+13, offHaut+18);
+    w.drawLine(offDroite+11, offHaut+17, offDroite+12, offHaut+17);
+    w.drawLine(offDroite+28, offHaut+17, offDroite+29, offHaut+17);
+    w.drawLine(offDroite+12, offHaut+19, offDroite+13, offHaut+19);
+    w.drawLine(offDroite+27, offHaut+19, offDroite+28, offHaut+19);
+    w.drawLine(offDroite+11, offHaut+20, offDroite+14, offHaut+20);
+    w.drawLine(offDroite+26, offHaut+20, offDroite+29, offHaut+20);
+    w.fillRect(offDroite+10, offHaut+21, offDroite+15, offHaut+27);
+    w.fillRect(offDroite+25, offHaut+21, offDroite+30, offHaut+27);
     //partie basse
     w.setColor("silver");
-    w.fillRect(20+0, w.height-40+25, 20+1, w.height-40+27);
-    w.fillRect(20+5, w.height-40+25, 20+7, w.height-40+27);
-    w.fillRect(20+12, w.height-40+25, 20+14, w.height-40+27);
-    w.fillRect(20+19, w.height-40+24, 20+21, w.height-40+27);
-    w.fillRect(20+26, w.height-40+25, 20+28, w.height-40+27);
-    w.fillRect(20+33, w.height-40+25, 20+35, w.height-40+27);
-    w.fillRect(20+39, w.height-40+25, 20+40, w.height-40+27);
-    w.fillRect(20+0, w.height-40+28, 20+40, w.height-40+39);
+    w.fillRect(offDroite+0, offHaut+25, offDroite+1, offHaut+27);
+    w.fillRect(offDroite+5, offHaut+25, offDroite+7, offHaut+27);
+    w.fillRect(offDroite+12, offHaut+25, offDroite+14, offHaut+27);
+    w.fillRect(offDroite+19, offHaut+24, offDroite+21, offHaut+27);
+    w.fillRect(offDroite+26, offHaut+25, offDroite+28, offHaut+27);
+    w.fillRect(offDroite+33, offHaut+25, offDroite+35, offHaut+27);
+    w.fillRect(offDroite+39, offHaut+25, offDroite+40, offHaut+27);
+    w.fillRect(offDroite+0, offHaut+28, offDroite+40, offHaut+39);
     //porte
     w.setColor("black");
-    w.drawPoint(20+17, w.height-40+33);
-    w.drawPoint(20+20, w.height-40+33);
-    w.drawPoint(20+23, w.height-40+33);
-    w.drawLine(20+17, w.height-40+34, 20+23, w.height-40+34);
-    w.fillRect(20+16, w.height-40+35, 20+24, w.height-40+39); 
+    w.drawPoint(offDroite+17, offHaut+33);
+    w.drawPoint(offDroite+20, offHaut+33);
+    w.drawPoint(offDroite+23, offHaut+33);
+    w.drawLine(offDroite+17, offHaut+34, offDroite+23, offHaut+34);
+    w.fillRect(offDroite+16, offHaut+35, offDroite+24, offHaut+39); 
 }
 
 void chatMario(DrawingWindow &w) {
+    int offHaut = w.height-40; //L'ordonnée la plus en haut pour dessiner les chateaux
+    int offDroite = w.width-60; //L'abscisse des points les plus à droite du chateau
     //poteau
     w.setColor("silver");
-    w.fillRect( w.width-60+5, w.height-40+6, w.width-60+6, w.height-40+35);
-    w.fillRect( w.width-60+4, w.height-40+36, w.width-60+7, w.height-40+39);
+    w.fillRect(offDroite+5, offHaut+6, offDroite+6, offHaut+35);
+    w.fillRect(offDroite+4, offHaut+36, offDroite+7, offHaut+39);
     //drapeau
     w.setColor("blue");
-    w.fillTriangle( w.width-60+0, w.height-40+7, w.width-60+4, w.height-40+7, w.width-60+4, w.height-40+11);
+    w.fillTriangle(offDroite+0, offHaut+7, offDroite+4, offHaut+7, offDroite+4, offHaut+11);
     //petits rectangles
     w.setColor("silver");
-    w.fillRect( w.width-60+10, w.height-40+24, w.width-60+40, w.height-40+39);
-    w.fillRect( w.width-60+16, w.height-40+14, w.width-60+34, w.height-40+23);
-    w.fillRect( w.width-60+10, w.height-40+22, w.width-60+13, w.height-40+23);
-    w.fillRect( w.width-60+37, w.height-40+22, w.width-60+40, w.height-40+23);
-    w.fillRect( w.width-60+16, w.height-40+11, w.width-60+20, w.height-40+13);
-    w.fillRect( w.width-60+23, w.height-40+11, w.width-60+27, w.height-40+13);
-    w.fillRect( w.width-60+30, w.height-40+11, w.width-60+34, w.height-40+13);
+    w.fillRect(offDroite+10, offHaut+24, offDroite+40, offHaut+39);
+    w.fillRect(offDroite+16, offHaut+14, offDroite+34, offHaut+23);
+    w.fillRect(offDroite+10, offHaut+22, offDroite+13, offHaut+23);
+    w.fillRect(offDroite+37, offHaut+22, offDroite+40, offHaut+23);
+    w.fillRect(offDroite+16, offHaut+11, offDroite+20, offHaut+13);
+    w.fillRect(offDroite+23, offHaut+11, offDroite+27, offHaut+13);
+    w.fillRect(offDroite+30, offHaut+11, offDroite+34, offHaut+13);
     //fenetres
     w.setColor("black");
-    w.fillRect( w.width-60+19, w.height-40+18, w.width-60+21, w.height-40+24);
-    w.fillRect( w.width-60+29, w.height-40+18, w.width-60+31, w.height-40+24);
+    w.fillRect(offDroite+19, offHaut+18, offDroite+21, offHaut+24);
+    w.fillRect(offDroite+29, offHaut+18, offDroite+31, offHaut+24);
     //porte
-    w.fillRect( w.width-60+22, w.height-40+31, w.width-60+28, w.height-40+39);
+    w.fillRect(offDroite+22, offHaut+31, offDroite+28, offHaut+39);
 }
 
 void prompt(int& angle, int& force) {
