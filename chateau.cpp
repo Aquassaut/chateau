@@ -70,6 +70,7 @@ void fenetreDeJeu(DrawingWindow &w) {
 bool playerMove(bool p1) {
     int angle, force;
     prompt(angle, force);
+    return p1; //Ca sera le flag de victoire
 }
 
 void staticEnv(DrawingWindow &w) {
@@ -109,11 +110,11 @@ void collineRand(float& largeur, float& hauteur) {
     cout << "la largeur vaut : " << largeur << endl; //DEBUG
 }
 
-void setUpVent() {
+void setUpVent(DrawingWindow &w) {
     int vent = ventRand();
     cout << "le vent vaut : " << vent << endl; // DEBUG
     w.setColor("black");
-    if (vent < 0) {
+    if (vent < 0) {
         //TODO
     }
 }
