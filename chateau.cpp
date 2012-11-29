@@ -229,22 +229,22 @@ void chatMario(DrawingWindow &w) {
 }
 
 void prompt(int& angle, int& force) {
-    bool erreur = 0;
+    bool erreur = false;
     cout << "Entrez un angle" << endl;
     do {
         if (erreur)
             cout << "Cet angle n'est pas valide, recommencez" << endl;
         cin >> angle;
-        erreur += 1;
+        erreur = true;
     }
     while(angle > 90 || angle < 0);
-    erreur = 0;
+    erreur = false;
     cout << "Entrez une force en pourcent" << endl;
     do {
         if (erreur)
             cout << "Cette force n'est pas valide, recommencez" << endl;
         cin >> force;
-        erreur += 1;
+        erreur = true;
     }
     while(force > 100 || force < 0);
 }
