@@ -18,18 +18,26 @@
 //Namespace
 using namespace std;
 
+//constantes
+#define GRAV 9.81
+#define KFROT 0.001
+#define REFRESH 0.1
+#define VENT_MAX 10
+
 //Prototypes des fonctions
-void setUpVent(DrawingWindow&);
+int setUpVent(DrawingWindow&);
 void colline(DrawingWindow&);
 void collineRand(float&, float&);
-void staticEnv(DrawingWindow&);
+int staticEnv(DrawingWindow&);
 void fenetreDeJeu(DrawingWindow&);
 void chatBowser(DrawingWindow&);
 void chatMario(DrawingWindow&);
-bool playerMove(bool);
+bool playerMove(int, int, DrawingWindow&);
 void prompt(int&, int&); 
 int ventRand();
 void barreBas(DrawingWindow&);
+void nPosition(float[], float[], int, int);
+int checkCollision(float[]);
 
 
 /*BLOC NOTE
@@ -45,8 +53,7 @@ void barreBas(DrawingWindow&);
  */
 
 //Implémentation des fonctions
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QApplication application(argc, argv);
     DrawingWindow window1(fenetreDeJeu, 640, 480);
     window1.setWindowTitle("Detruisez le chateau de Bowser");   
@@ -58,23 +65,100 @@ int main(int argc, char *argv[])
 void fenetreDeJeu(DrawingWindow &w) {
     //la largeur vaut 640
     //la hauteur vaut 480   
-    int compteur = 1; // Son mod 2 donnera le numéro du joueur
+    int compteur = 1, vent; // Son mod 2 donnera le numéro du joueur
     bool victoire = false; //pourra faire sortir de la boucle en cas de victoire
-    staticEnv(w); //Dessine l'environnement statique (bckg, colline, chateaux)
+    vent = staticEnv(w); //Dessine l'environnement statique (bckg, colline, chateaux)
     while(!victoire) {
         compteur +=1;
         cout << "A votre tour de joueur, Player " << compteur%2+1 << endl;
-        victoire = playerMove(!!(compteur%2));
+        victoire = playerMove(compteur%2+1, vent, w);
     }
 }
-
-bool playerMove(bool p1) {
-    int angle, force;
+   /**
+    * A partir de l'angle et de la force, il faut :
+    *  1 choisir une position de départ avec les coordonnées du chateau du player courant
+    *  2 pour chaque interval de temps, calculer la nouvelle position
+    *  3 pour chaque nouvelle position, vérifier si il y a eu une collision
+    *  4 en cas de collision, arreter la boucle
+    *  5 en cas de collision, déclarer une victoire
+    */
+bool playerMove(int player, int vVent, DrawingWindow &w) {
+    bool victoire = false;
+    int angle, force, collision = 0;
+    float coord [2];
+    float vitesse [2];
     prompt(angle, force);
-    return p1; //Ca sera le flag de victoire
+    vitesse[0] = 1.5*force*cos(M_PI*angle/180);
+    vitesse[1] = 1.5*force*sin(M_PI*angle/180);
+    cout << "Les vitesses initiales sont " << vitesse[0] << " et " << vitesse[1] << endl;
+//    coord[1] = w.height-71; //ordonnée initialle : juste au dessus du drapeau
+    coord[1] = 71;
+    if (player == 1) {
+        coord[0] = -282; //38; //juste à droite de l'abs du drapeau de Bowser
+
+    }
+    else {
+        coord[0] = 245;//w.width-55; //juste à gauche de l'abs du drapeau de Mario
+    }
+    w.setColor("black");
+    while(collision == 0) {
+        //dessin de la position
+        w.drawCircle((int)(w.width/2+coord[0]), (int)(w.height-coord[1]), 3);
+        //check de collision
+        collision = checkCollision(coord);
+        //calcul de la nouvelle position
+        nPosition(coord, vitesse, vVent, player);
+        //attendre avant le prochain refresh
+        w.msleep(50);
+    } 
+    return victoire;
 }
 
-void staticEnv(DrawingWindow &w) {
+   /**
+    *   Code collision :
+    *   Pas de collision : 0
+    *   collision chateau p2 : 1 
+    *   collision chateau p1 : 2
+    *   collision sol : 3
+    *   collision colline : 4
+    */
+
+int checkCollision(float p[]) { 
+//TODO : avoir accès à w.height, w.width, et la hauteur et largeur de la colline
+    bool col = 0;
+    if (p[1] <= 30)
+        col = 3;
+/*    else if (p[0] >= -2 && p[0] <= 60 && p[1] <= w.height-70) //X entre 20 et 60 et y sous 70
+        col = 2;
+    else if (p[0] >= )
+*/
+    return col;
+}
+
+
+void nPosition(float p[], float v[], int vVent, int player) {
+    float vr = sqrt(pow(v[0]-vVent, 2) + pow(v[1], 2));
+    //Update des positions
+    
+    p[1] += v[1] * REFRESH;
+    if (player == 1) {
+        p[0] += v[0] * REFRESH;
+    }
+    else {
+        p[0] -= v[0] * REFRESH;
+    }
+    //update des vitesses prises en compte à la prochaine itération
+    v[0] += (REFRESH * (-KFROT * (vr) * (v[0] - vVent)));
+    v[1] += (REFRESH * (-KFROT * (vr) * v[1] - GRAV));
+    //DEBUG
+    cout << "VR vaut : " << vr << endl;
+    cout << "Vitesse : " << v[0] << "," << v[1] << endl;
+    cout << "Pos : " << p[0] << "," << p[1] << endl;
+}
+
+
+int staticEnv(DrawingWindow &w) {
+    int vent;
     w.setBgColor("lightcyan");
     w.clearGraph();
     srand(time(NULL)); //Initialise le random
@@ -82,7 +166,8 @@ void staticEnv(DrawingWindow &w) {
     colline(w); //dessine la colline
     chatBowser(w);
     chatMario(w);
-    setUpVent(w);
+    vent = setUpVent(w);
+    return vent;
 }
 
 void colline(DrawingWindow &w) {
@@ -114,7 +199,7 @@ void collineRand(float& largeur, float& hauteur) {
     cout << "la largeur vaut : " << largeur << endl; //DEBUG
 }
 
-void setUpVent(DrawingWindow &w) {
+int setUpVent(DrawingWindow &w) {
     int vent = ventRand();
     cout << "le vent vaut : " << vent << endl; // DEBUG
     w.setColor("black");
@@ -129,15 +214,15 @@ void setUpVent(DrawingWindow &w) {
         w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-65);
         w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-55);
     }
+    return vent;
 }
 
 int ventRand() {
-    int ventMax = 50; //CONFIG
     //On cherche à obtenir une valeur entre -ventMax et ventMax, du coup
     //on prend une valeur entre 0 et ventMax avec le modulo, et on lui affecte un signe
     //en multipliant cette valeur par -1 exposant rand(). Si rand est pair, on aura -1*total;
     //Si rand est impair, on aura 1*total
-    int vent = (rand() % ventMax) * (pow(-1, rand()));
+    int vent = (rand() % VENT_MAX) * (pow(-1, rand()));
     return vent;
 }
 
@@ -199,18 +284,19 @@ void chatBowser(DrawingWindow &w) {
     w.fillRect(offDroite+16, offHaut+35, offDroite+24, offHaut+39); 
 }
 
+
 void chatMario(DrawingWindow &w) {
     int offHaut = w.height-70; //L'ordonnée la plus en haut pour dessiner les chateaux
     int offDroite = w.width-60; //L'abscisse des points les plus à droite du chateau
     //poteau
     w.setColor("darkgrey");
-    w.fillRect(offDroite+5, offHaut+6, offDroite+6, offHaut+35);
+    w.fillRect(offDroite+5, offHaut+0, offDroite+6, offHaut+35);
     w.fillRect(offDroite+4, offHaut+36, offDroite+7, offHaut+39);
     //drapeau
     w.setColor("blue");
-    w.fillTriangle(offDroite+0, offHaut+7,
-                   offDroite+4, offHaut+7,
-                   offDroite+4, offHaut+11);
+    w.fillTriangle(offDroite+0, offHaut+1,
+                   offDroite+4, offHaut+1,
+                   offDroite+4, offHaut+5);
     //petits rectangles
     w.setColor("darkgrey");
     w.fillRect(offDroite+10, offHaut+24, offDroite+40, offHaut+39);
