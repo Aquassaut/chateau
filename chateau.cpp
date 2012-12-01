@@ -23,6 +23,14 @@ using namespace std;
 #define KFROT 0.001
 #define REFRESH 0.05
 #define VENT_MAX 10
+#define F_HAUT 480
+#define F_LARG 640
+
+
+#define HCOL_MIN 80
+#define HCOL_MAX 300
+#define LCOL_MIN 50
+#define LCOL_MAX 200
 
 //Prototypes des fonctions
 int setUpVent(DrawingWindow&);
@@ -34,10 +42,12 @@ void chatBowser(DrawingWindow&);
 void chatMario(DrawingWindow&);
 int playerMove(int, float[], DrawingWindow&);
 void prompt(int&, int&); 
-int ventRand();
+float ventRand();
 void barreBas(DrawingWindow&);
 void nPosition(float[], float[], int, int);
 int checkCollision(float[], float[]);
+int convAbs(float);
+int convOrd(float);
 
 
 /*BLOC NOTE
@@ -52,10 +62,16 @@ int checkCollision(float[], float[]);
  *
  */
 
+
+
+
+
+
+
 //Implémentation des fonctions
 int main(int argc, char *argv[]) {
     QApplication application(argc, argv);
-    DrawingWindow window1(fenetreDeJeu, 640, 480);
+    DrawingWindow window1(fenetreDeJeu, F_LARG, F_HAUT);
     window1.setWindowTitle("Detruisez le chateau de Bowser");   
     window1.show();
     application.exec();
@@ -63,8 +79,6 @@ int main(int argc, char *argv[]) {
 }
 
 void fenetreDeJeu(DrawingWindow &w) {
-    //la largeur vaut 640
-    //la hauteur vaut 480   
     int compteur = 1; // Son mod 2 donnera le numéro du joueur
     float ventColHColL[3];
     int collision = 0; //pourra faire sortir de la boucle en cas de victoire
@@ -79,6 +93,7 @@ void fenetreDeJeu(DrawingWindow &w) {
     else if(collision == 2)
         cout << "Player 2 a gagné !" << endl;
 }
+
    /**
     * A partir de l'angle et de la force, il faut :
     *  1 choisir une position de départ avec les coordonnées du chateau du player courant
@@ -132,7 +147,7 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
 
 int checkCollision(float p[], float vCC[]) { 
 //TODO : Faire des trucs pour les chateaux
-    bool col = 0;
+    int col = 0;
     if (p[1] <= 30)
         col = 3;
     else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]-31)
@@ -195,17 +210,6 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
     }
 }
 
-void collineRand(float& largeur, float& hauteur) {
-    int hauteurMin = 80, hauteurMax = 300; //CONFIG
-    int largeurMin = 50, largeurMax = 200; //CONFIG
-    //On cherche à obtenir deux valeurs, entre min et max, du coup, on prend une valeur
-    //entre 0 et la range disponible (max - min) avec le modulo, et on lui ajoute min
-    //de façon à avoir une valeur aléatoire entre min et max
-    hauteur = hauteurMin + (rand() % (hauteurMax - hauteurMin));
-    largeur = largeurMin + (rand() % (largeurMax - largeurMin));
-    cout << "la hauteur vaut : " << hauteur << endl; //DEBUG
-    cout << "la largeur vaut : " << largeur << endl; //DEBUG
-}
 
 int setUpVent(DrawingWindow &w) {
     int vent = ventRand();
@@ -225,19 +229,13 @@ int setUpVent(DrawingWindow &w) {
     return vent;
 }
 
-int ventRand() {
-    //On cherche à obtenir une valeur entre -ventMax et ventMax, du coup
-    //on prend une valeur entre 0 et ventMax avec le modulo, et on lui affecte un signe
-    //en multipliant cette valeur par -1 exposant rand(). Si rand est pair, on aura -1*total;
-    //Si rand est impair, on aura 1*total
-    int vent = (rand() % VENT_MAX) * (pow(-1, rand()));
-    return vent;
-}
+
+     
 
 
 void barreBas(DrawingWindow& w) {
     w.setColor("darkslategrey");
-    w.fillRect(0, w.height, w.width, w.height-29);
+    w.fillRect(convAbs(-F_LARG/2), convOrd(-1), convAbs(F_LARG/2), convOrd(-30));
 }
 
 
@@ -292,7 +290,6 @@ void chatBowser(DrawingWindow &w) {
     w.fillRect(offDroite+16, offHaut+35, offDroite+24, offHaut+39); 
 }
 
-
 void chatMario(DrawingWindow &w) {
     int offHaut = w.height-70; //L'ordonnée la plus en haut pour dessiner les chateaux
     int offDroite = w.width-60; //L'abscisse des points les plus à droite du chateau
@@ -341,4 +338,60 @@ void prompt(int& angle, int& force) {
         erreur = true;
     }
     while(force > 100 || force < 0);
+}
+
+
+
+
+
+
+
+    /** 
+     *  On cherche à obtenir deux valeurs, entre la valeur min et
+     *  la valeur max. Pour ce faire on prend la valeur min et on 
+     *  lui ajoute une valeur dans la plage de valeurs disponible
+     *  (entre 0 et max - min) avec le modulo.
+     */
+
+void collineRand(float& largeur, float& hauteur) {
+    hauteur = HCOL_MIN + (rand() % (HCOL_MAX - HCOL_MIN));
+    largeur = LCOL_MIN + (rand() % (LCOL_MAX - LCOL_MIN));
+    cout << "la hauteur de la colline vaut : " << hauteur << endl; //DEBUG
+    cout << "la largeur de la colline vaut : " << largeur << endl; //DEBUG
+}
+
+
+    /**
+     *  renvoie la force du vent, entre -VENT_MAX et VENT_MAX.
+     *  Cette force est calculée en prenant un nombre pseudo-aléatoire,
+     *  en calculant son modulo 100*VENT_MAX, en le divisant par 10 pour
+     *  avoir un nombre à virgule (afin d'obtenir une plus grande
+     *  fourchette de nombres. On le multiplie ensuite par -1 à la
+     *  puissance du nombre pseudo aléatoire afin de définit un signe
+     *  aléatoire.
+     */
+
+float ventRand() {
+    float vent = ((rand() % 100*VENT_MAX) * (pow(-1, rand()))/100);
+    return vent;
+}
+
+    /**
+     *  Renvoie une abscisse utilisable par la bibliothèque graphique à partir 
+     *  d'une abscisse d'un système dans lequel l'origine serait au milieu de la
+     *  colline, au niveau du sol
+     */
+
+int convAbs(float abs) {
+    return abs + F_LARG/2;
+}
+
+    /**
+     *  Renvoie une ordonnée utilisable par la bibliothèque graphique à partir 
+     *  d'une ordonnée d'un système dans lequel l'origine serait au milieu de la
+     *  colline, au niveau du sol
+     */
+
+int convOrd(float ord) {
+    return F_HAUT - 30 - ord;
 }
