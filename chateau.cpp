@@ -33,7 +33,7 @@ using namespace std;
 #define LCOL_MAX 200
 
 //Prototypes des fonctions
-int setUpVent(DrawingWindow&);
+float setUpVent(DrawingWindow&);
 void colline(DrawingWindow&, float[]);
 void collineRand(float&, float&);
 void staticEnv(DrawingWindow&, float[]);
@@ -136,29 +136,6 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     return collision;
 }
 
-   /**
-    *   Code collision :
-    *   Pas de collision : 0
-    *   collision chateau p2 : 1 
-    *   collision chateau p1 : 2
-    *   collision sol : 3
-    *   collision colline : 4
-    */
-
-int checkCollision(float p[], float vCC[]) { 
-//TODO : Faire des trucs pour les chateaux
-    int col = 0;
-    if (p[1] <= 30)
-        col = 3;
-    else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]-31)
-        col = 4;
-    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 70) //X entre 20 et 60 et y sous 70
-        col = 2;
-    else if (p[0] >= 260 && p[0] <= 300 && p[1] <= 70)
-        col = 1;
-    return col;
-}
-
 
 void nPosition(float p[], float v[], int vVent, int player) {
     float vr = sqrt(pow(v[0]-vVent, 2) + pow(v[1], 2));
@@ -211,32 +188,11 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
 }
 
 
-int setUpVent(DrawingWindow &w) {
-    int vent = ventRand();
-    cout << "le vent vaut : " << vent << endl; // DEBUG
-    w.setColor("black");
-    //Partie horizontale de la flèche sur 30 pixels
-    w.drawLine(w.width/2-15, w.height-60, w.width/2+15, w.height-60);
-    //Vent vers la gauche
-    if (vent < 0) {
-        w.drawLine(w.width/2-15, w.height-60, w.width/2-10, w.height-65);
-        w.drawLine(w.width/2-15, w.height-60, w.width/2-10, w.height-55);
-    }
-    else {
-        w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-65);
-        w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-55);
-    }
-    return vent;
-}
 
 
      
 
 
-void barreBas(DrawingWindow& w) {
-    w.setColor("darkslategrey");
-    w.fillRect(convAbs(-F_LARG/2), convOrd(-1), convAbs(F_LARG/2), convOrd(-30));
-}
 
 
 void chatBowser(DrawingWindow &w) {
@@ -319,6 +275,80 @@ void chatMario(DrawingWindow &w) {
     w.fillRect(offDroite+22, offHaut+31, offDroite+28, offHaut+39);
 }
 
+
+
+
+
+
+
+
+
+   /**
+    *   renvoie un code collision selon le type de collision rencontré
+    *   Code collision :
+    *   Pas de collision : 0
+    *   collision chateau p2 : 1 
+    *   collision chateau p1 : 2
+    *   collision sol : 3
+    *   collision colline : 4
+    *   
+    *   TODO : ajouter de la précision et prise en compte de la modification de
+    *   la hitbox après impact.
+    */
+
+int checkCollision(float p[], float vCC[]) { 
+    int col = 0;
+    if (p[1] <= 30)
+        col = 3;
+    else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]-31)
+        col = 4;
+    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 70) //X entre 20 et 60 et y sous 70
+        col = 2;
+    else if (p[0] >= 260 && p[0] <= 300 && p[1] <= 70)
+        col = 1;
+    return col;
+}
+
+
+    /**
+     *  Reçoit la force du vent, la dessine dans la colline et la renvoie
+     *  à la fonction mère.
+     *
+     *  TODO: peut-être faire en sorte que la classe mère appèle la force du vent
+     *  et l'envoit à cette fonction pour la dessiner. C'est une fonction de dessin
+     *  pas la peine de lui faire faire trop de choses. et de copier 30 fois
+     *  la même variable par valeur.
+     */
+
+
+float setUpVent(DrawingWindow &w) {
+    float vent = ventRand();
+    cout << "le vent vaut : " << vent << endl; // DEBUG
+    w.setColor("black");
+    //Partie horizontale de la flèche sur 30 pixels
+    w.drawLine(w.width/2-15, w.height-60, w.width/2+15, w.height-60);
+    //Vent vers la gauche
+    if (vent < 0) {
+        w.drawLine(w.width/2-15, w.height-60, w.width/2-10, w.height-65);
+        w.drawLine(w.width/2-15, w.height-60, w.width/2-10, w.height-55);
+    }
+    else {
+        w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-65);
+        w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-55);
+    }
+    return vent;
+}
+
+
+    /**
+     *  Demande à l'utilisateur d'entrer les valeurs pour l'angle
+     *  et la force du tir et effectue les tests nécessaires à la
+     *  stabilité du programme.
+     *
+     *  TODO : s'assurer que l'input est uniquement un ou plusieurs
+     *  chiffre. Pour l'instant, ça accepte les lettres
+     */
+
 void prompt(int& angle, int& force) {
     bool erreur = false;
     cout << "Entrez un angle" << endl;
@@ -341,9 +371,14 @@ void prompt(int& angle, int& force) {
 }
 
 
+    /**
+     *  dessine la barre du bas/sol
+     */
 
-
-
+void barreBas(DrawingWindow& w) {
+    w.setColor("darkslategrey");
+    w.fillRect(convAbs(-F_LARG/2), convOrd(0), convAbs(F_LARG/2), convOrd(-30));
+}
 
 
     /** 
