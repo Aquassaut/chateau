@@ -151,28 +151,22 @@ void staticEnv(DrawingWindow &w, float ventColHColL[]) {
 }
 
 void colline(DrawingWindow &w, float ventColHColL[]) {
-    //float larg, haut;
     int offHaut = w.height-31;
     collineRand(ventColHColL[1], ventColHColL[2]);
     w.setColor("sienna");
-    for (int x = -w.width/2; x <= w.width/2; x+=1) { //x
-        for (int y = w.height; y > 0; y-=1) { //y
+    for (int x = -F_LARG/2; x <= F_LARG/2; x+=1) { //x
+        for (int y = F_HAUT; y > 0; y-=1) { //y ; Aucune idée de pourquoi ça marche,
+        //il faudra probablement l'inclure dans la doc, sinon c'est la merde si on me 
+        //demande.
             if ((ventColHColL[1]*(1-(2*x/ventColHColL[2])*(2*x/ventColHColL[2]))) > y) { 
-                w.drawLine(x+w.width/2, offHaut-y, x+w.width/2, offHaut); 
-                //w.drawLine(x+w.width/2, w.height-y, x+w.width/2, w.height); 
-                //cout << "J'ai dessiné une ligne sous " << (x+(w.width/2)) << "," << (w.height-y) << endl;
+                w.drawLine(convAbs(x), convOrd(y), convAbs(x), convOrd(0)); 
                 y = 0; //next x
             }
         }
     }
-}
-
-
-
-
-     
-
-
+}   //TODO: Utiliser un nouvel algorithme plus efficace qui partirait du milieu
+    // et utiliserait une symétrie pour dessiner la parabole et s'arrêterait dès
+    // qu'on sort de la parabole.
 
 
 void chatBowser(DrawingWindow &w) {
