@@ -26,18 +26,18 @@ using namespace std;
 
 //Prototypes des fonctions
 int setUpVent(DrawingWindow&);
-void colline(DrawingWindow&);
+void colline(DrawingWindow&, float[]);
 void collineRand(float&, float&);
-int staticEnv(DrawingWindow&);
+void staticEnv(DrawingWindow&, float[]);
 void fenetreDeJeu(DrawingWindow&);
 void chatBowser(DrawingWindow&);
 void chatMario(DrawingWindow&);
-bool playerMove(int, int, DrawingWindow&);
+int playerMove(int, float[], DrawingWindow&);
 void prompt(int&, int&); 
 int ventRand();
 void barreBas(DrawingWindow&);
 void nPosition(float[], float[], int, int);
-int checkCollision(float[]);
+int checkCollision(float[], float[]);
 
 
 /*BLOC NOTE
@@ -65,14 +65,19 @@ int main(int argc, char *argv[]) {
 void fenetreDeJeu(DrawingWindow &w) {
     //la largeur vaut 640
     //la hauteur vaut 480   
-    int compteur = 1, vent; // Son mod 2 donnera le numéro du joueur
-    bool victoire = false; //pourra faire sortir de la boucle en cas de victoire
-    vent = staticEnv(w); //Dessine l'environnement statique (bckg, colline, chateaux)
-    while(!victoire) {
+    int compteur = 1; // Son mod 2 donnera le numéro du joueur
+    float ventColHColL[3];
+    int collision = 0; //pourra faire sortir de la boucle en cas de victoire
+    staticEnv(w, ventColHColL); //Dessine l'environnement statique (bckg, colline, chateaux)
+    while(collision != 1 && collision != 2) {
         compteur +=1;
         cout << "A votre tour de joueur, Player " << compteur%2+1 << endl;
-        victoire = playerMove(compteur%2+1, vent, w);
+        collision = playerMove(compteur%2+1, ventColHColL, w);
     }
+    if(collision == 1)
+        cout << "Player 1 a gagné !" << endl;
+    else if(collision == 2)
+        cout << "Player 2 a gagné !" << endl;
 }
    /**
     * A partir de l'angle et de la force, il faut :
@@ -82,8 +87,9 @@ void fenetreDeJeu(DrawingWindow &w) {
     *  4 en cas de collision, arreter la boucle
     *  5 en cas de collision, déclarer une victoire
     */
-bool playerMove(int player, int vVent, DrawingWindow &w) {
-    bool victoire = false;
+
+int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
+    int vent = ventColHColL[0];
     int angle, force, collision = 0;
     float coord [2];
     float vitesse [2];
@@ -105,13 +111,14 @@ bool playerMove(int player, int vVent, DrawingWindow &w) {
         //dessin de la position
         w.drawCircle((int)(w.width/2+coord[0]), (int)(w.height-coord[1]), 3);
         //check de collision
-        collision = checkCollision(coord);
+        collision = checkCollision(coord, ventColHColL);
         //calcul de la nouvelle position
-        nPosition(coord, vitesse, vVent, player);
+        nPosition(coord, vitesse, vent, player);
         //attendre avant le prochain refresh
         w.msleep(20);
+        cout << "collision vaut : " << collision << endl;
     } 
-    return victoire;
+    return collision;
 }
 
    /**
@@ -123,15 +130,17 @@ bool playerMove(int player, int vVent, DrawingWindow &w) {
     *   collision colline : 4
     */
 
-int checkCollision(float p[]) { 
-//TODO : avoir accès à w.height, w.width, et la hauteur et largeur de la colline
+int checkCollision(float p[], float vCC[]) { 
+//TODO : Faire des trucs pour les chateaux
     bool col = 0;
     if (p[1] <= 30)
         col = 3;
-/*    else if (p[0] >= -2 && p[0] <= 60 && p[1] <= w.height-70) //X entre 20 et 60 et y sous 70
+    else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]-31)
+        col = 4;
+    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 70) //X entre 20 et 60 et y sous 70
         col = 2;
-    else if (p[0] >= )
-*/
+    else if (p[0] >= 260 && p[0] <= 300 && p[1] <= 70)
+        col = 1;
     return col;
 }
 
@@ -158,27 +167,25 @@ void nPosition(float p[], float v[], int vVent, int player) {
 }
 
 
-int staticEnv(DrawingWindow &w) {
-    int vent;
+void staticEnv(DrawingWindow &w, float ventColHColL[]) {
     w.setBgColor("lightcyan");
     w.clearGraph();
     srand(time(NULL)); //Initialise le random
     barreBas(w);
-    colline(w); //dessine la colline
+    colline(w, ventColHColL); //dessine la colline
     chatBowser(w);
     chatMario(w);
-    vent = setUpVent(w);
-    return vent;
+    ventColHColL[0] = setUpVent(w);
 }
 
-void colline(DrawingWindow &w) {
-    float larg, haut;
+void colline(DrawingWindow &w, float ventColHColL[]) {
+    //float larg, haut;
     int offHaut = w.height-31;
-    collineRand(larg, haut);
+    collineRand(ventColHColL[1], ventColHColL[2]);
     w.setColor("sienna");
     for (int x = -w.width/2; x <= w.width/2; x+=1) { //x
         for (int y = w.height; y > 0; y-=1) { //y
-            if ((haut*(1-(2*x/larg)*(2*x/larg))) > y) { 
+            if ((ventColHColL[1]*(1-(2*x/ventColHColL[2])*(2*x/ventColHColL[2]))) > y) { 
                 w.drawLine(x+w.width/2, offHaut-y, x+w.width/2, offHaut); 
                 //w.drawLine(x+w.width/2, w.height-y, x+w.width/2, w.height); 
                 //cout << "J'ai dessiné une ligne sous " << (x+(w.width/2)) << "," << (w.height-y) << endl;
