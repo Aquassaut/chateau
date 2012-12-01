@@ -137,26 +137,6 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
 }
 
 
-void nPosition(float p[], float v[], int vVent, int player) {
-    float vr = sqrt(pow(v[0]-vVent, 2) + pow(v[1], 2));
-    //Update des positions
-    
-    p[1] += v[1] * REFRESH;
-    if (player == 1) {
-        p[0] += v[0] * REFRESH;
-    }
-    else {
-        p[0] -= v[0] * REFRESH;
-        vVent = -vVent;
-    }
-    //update des vitesses prises en compte à la prochaine itération
-    v[0] += (REFRESH * (-KFROT * (vr) * (v[0] - vVent)));
-    v[1] += (REFRESH * (-KFROT * (vr) * v[1] - GRAV));
-    //DEBUG
-    cout << "VR vaut : " << vr << endl;
-    cout << "Vitesse : " << v[0] << "," << v[1] << endl;
-    cout << "Pos : " << p[0] << "," << p[1] << endl;
-}
 
 
 void staticEnv(DrawingWindow &w, float ventColHColL[]) {
@@ -277,10 +257,34 @@ void chatMario(DrawingWindow &w) {
 
 
 
+    /**
+     *  Update des positions du projecile. La première étape consiste
+     *  à calculer Vr, qui necessite la connaissance de Vx et Vy, puis
+     *  mise à jour tour à tour des positions puis des vitesses pour la
+     *  prochaine itération. Le calcul de l'acceleration est calculée
+     *  directement dans la mise à jour des vitesse pour économiser une
+     *  variable.
+     *  La position en x et la prise en compte du vent dépendent du joueur
+     *  projettant le projectile.
+     */
 
-
-
-
+void nPosition(float p[], float v[], int vVent, int player) {
+    float vr = sqrt(pow(v[0]-vVent, 2) + pow(v[1], 2));
+    //Update des positions
+    p[1] += v[1] * REFRESH;
+    if (player == 1) {
+        p[0] += v[0] * REFRESH;
+    }
+    else {
+        p[0] -= v[0] * REFRESH;
+        vVent = -vVent;
+    }
+    v[0] += (REFRESH * (-KFROT * (vr) * (v[0] - vVent)));
+    v[1] += (REFRESH * (-KFROT * (vr) * v[1] - GRAV));
+    cout << "VR vaut : " << vr << endl; //DEBUG
+    cout << "Vitesse : " << v[0] << "," << v[1] << endl; //DEBUG
+    cout << "Pos : " << p[0] << "," << p[1] << endl; //DEBUG
+}
 
 
    /**
