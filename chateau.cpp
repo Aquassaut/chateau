@@ -113,7 +113,7 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     vitesse[1] = 1.5*force*sin(M_PI*angle/180);
     cout << "Les vitesses initiales sont " << vitesse[0] << " et " << vitesse[1] << endl;
 //    coord[1] = w.height-71; //ordonnée initialle : juste au dessus du drapeau
-    coord[1] = 71;
+    coord[1] = 41;
     if (player == 1) {
         coord[0] = -w.width/2+38; //38; //juste à droite de l'abs du drapeau de Bowser
 
@@ -121,16 +121,19 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     else {
         coord[0] = w.width/2-55; //juste à gauche de l'abs du drapeau de Mario
     }
-    w.setColor("black");
     while(collision == 0) {
         //dessin de la position
-        w.drawCircle((int)(w.width/2+coord[0]), (int)(w.height-coord[1]), 3);
+        int couleurs = w.getPointColor(convAbs(coord[0]), convOrd(coord[1]));
+        w.setColor("black");
+        w.drawPoint(convAbs(coord[0]), convOrd(coord[1]));
         //check de collision
         collision = checkCollision(coord, ventColHColL);
+        w.msleep(20);
+        w.setColor(couleurs);
+        w.drawPoint(convAbs(coord[0]), convOrd(coord[1]));
         //calcul de la nouvelle position
         nPosition(coord, vitesse, vent, player);
         //attendre avant le prochain refresh
-        w.msleep(20);
         cout << "collision vaut : " << collision << endl;
     } 
     return collision;
@@ -154,9 +157,7 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
     collineRand(ventColHColL[1], ventColHColL[2]);
     w.setColor("sienna");
     for (int x = 0; x <= ventColHColL[2]/2; x+=1) { //x
-        for (int y = F_HAUT; y > 0; y-=1) { //y ; Aucune idée de pourquoi ça marche,
-        //il faudra probablement l'inclure dans la doc, sinon c'est la merde si on me 
-        //demande.
+        for (int y = F_HAUT; y > 0; y-=1) { //y 
             if ((ventColHColL[1]*(1-(2*x/ventColHColL[2])*(2*x/ventColHColL[2]))) > y) { 
                 w.drawLine(convAbs(x), convOrd(y), convAbs(x), convOrd(0));
                 w.drawLine(convAbs(-x), convOrd(y), convAbs(-x), convOrd(0));
@@ -164,10 +165,7 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
             }
         }
     }
-}   //TODO: Utiliser un nouvel algorithme plus efficace qui partirait du milieu
-    // et utiliserait une symétrie pour dessiner la parabole et s'arrêterait dès
-    // qu'on sort de la parabole.
-
+}
 
 void chatBowser(DrawingWindow &w) {
     int offHaut = w.height-70; //L'ordonnée la plus en haut pour dessiner les chateaux
@@ -296,13 +294,13 @@ void nPosition(float p[], float v[], int vVent, int player) {
 
 int checkCollision(float p[], float vCC[]) { 
     int col = 0;
-    if (p[1] <= 30)
+    if (p[1] <= 0)
         col = 3;
-    else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]-31)
+    else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]) //-31 ?
         col = 4;
-    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 70) //X entre 20 et 60 et y sous 70
+    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 40) //70? //X entre 20 et 60 et y sous 70
         col = 2;
-    else if (p[0] >= 260 && p[0] <= 300 && p[1] <= 70)
+    else if (p[0] >= 260 && p[0] <= 300 && p[1] <= 40) //70?
         col = 1;
     return col;
 }
