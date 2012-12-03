@@ -151,15 +151,15 @@ void staticEnv(DrawingWindow &w, float ventColHColL[]) {
 }
 
 void colline(DrawingWindow &w, float ventColHColL[]) {
-    int offHaut = w.height-31;
     collineRand(ventColHColL[1], ventColHColL[2]);
     w.setColor("sienna");
-    for (int x = -F_LARG/2; x <= F_LARG/2; x+=1) { //x
+    for (int x = 0; x <= ventColHColL[2]/2; x+=1) { //x
         for (int y = F_HAUT; y > 0; y-=1) { //y ; Aucune idée de pourquoi ça marche,
         //il faudra probablement l'inclure dans la doc, sinon c'est la merde si on me 
         //demande.
             if ((ventColHColL[1]*(1-(2*x/ventColHColL[2])*(2*x/ventColHColL[2]))) > y) { 
-                w.drawLine(convAbs(x), convOrd(y), convAbs(x), convOrd(0)); 
+                w.drawLine(convAbs(x), convOrd(y), convAbs(x), convOrd(0));
+                w.drawLine(convAbs(-x), convOrd(y), convAbs(-x), convOrd(0));
                 y = 0; //next x
             }
         }
