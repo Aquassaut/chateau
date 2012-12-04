@@ -15,6 +15,9 @@
 #include <cstdlib> //Pour générer un nombre pseudo-aléatoire
 #include <time.h> //Pour initialiser le randomizer
 
+
+// SALUT FX
+
 //Namespace
 using namespace std;
 
