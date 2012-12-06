@@ -174,47 +174,47 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
 void tortue(DrawingWindow &w, float x, float y) {
     //Le milieu de la carapace
     w.setColor("darkgreen");
-    w.fillRect(convAbs(-3 + x), convOrd(11 + y), convAbs(4 + x), convOrd(9 + y));
-    w.fillRect(convAbs(-6 + x), convOrd(8 + y), convAbs(7 + x), convOrd(4 + y));
+    w.fillRect(convAbs(x - 3), convOrd(y + 11), convAbs(x + 4), convOrd(y + 9));
+    w.fillRect(convAbs(x - 6), convOrd(y + 8), convAbs(x + 7), convOrd(y + 4));
     //Les cotes de la carapace
     w.setColor("green");
-    w.fillRect(convAbs(-2 + x), convOrd(9 + y), convAbs(3 + x), convOrd(7 + y));
+    w.fillRect(convAbs(x - 2), convOrd(y + 9), convAbs(x + 3), convOrd(y + 7));
     //le bas de la carapace
     w.setColor("White");
-    w.fillRect(convAbs(-6 + x), convOrd(4 + y), convAbs(-2 + x), convOrd(2 + y));
-    w.fillRect(convAbs(3 + x), convOrd(4 + y), convAbs(7 + x), convOrd(2 + y));
-    w.fillRect(convAbs(-1 + x), convOrd(2 + y), convAbs(2 + x), convOrd(1 + y));
+    w.fillRect(convAbs(x - 6), convOrd(y + 4), convAbs(x - 2), convOrd(y + 2));
+    w.fillRect(convAbs(x + 3), convOrd(y + 4), convAbs(x + 7), convOrd(y + 2));
+    w.fillRect(convAbs(x - 1), convOrd(y + 2), convAbs(x + 2), convOrd(y + 1));
     //les contours
     w.setColor("black");
-    w.drawLine(convAbs(-1 + x), convOrd(0 + y), convAbs(2 + x), convOrd(0 + y));
-    w.drawLine(convAbs(-3 + x), convOrd(1 + y), convAbs(-2 + x), convOrd(1 + y));
-    w.drawLine(convAbs(3 + x), convOrd(1 + y), convAbs(4 + x), convOrd(1 + y));
-    w.drawLine(convAbs(-6 + x), convOrd(2 + y), convAbs(-3 + x), convOrd(2 + y));
-    w.drawLine(convAbs(4 + x), convOrd(2 + y), convAbs(7 + x), convOrd(2 + y));
-    w.drawPoint(convAbs(-6 + x), convOrd(3 + y));
-    w.drawPoint(convAbs(7 + x), convOrd(3 + y));
-    w.drawLine(convAbs(-7 + x), convOrd(7 + y), convAbs(-7 + x), convOrd(3 + y));
-    w.drawLine(convAbs(8 + x), convOrd(7 + y), convAbs(8 + x), convOrd(3 + y));
-    w.drawLine(convAbs(-1 + x), convOrd(3 + y), convAbs(2 + x), convOrd(3 + y));
-    w.drawLine(convAbs(-4 + x), convOrd(4 + y), convAbs(-2 + x), convOrd(4 + y));
-    w.drawLine(convAbs(3 + x), convOrd(4 + y), convAbs(5 + x), convOrd(4 + y));
-    w.drawPoint(convAbs(-5 + x), convOrd(5 + y));
-    w.drawPoint(convAbs(6 + x), convOrd(5 + y));
-    w.drawPoint(convAbs(-2 + x), convOrd(5 + y));
-    w.drawPoint(convAbs(3 + x), convOrd(5 + y));
-    w.drawLine(convAbs(-6 + x), convOrd(9 + y), convAbs(-6 + x), convOrd(7 + y));
-    w.drawLine(convAbs(7 + x), convOrd(9 + y), convAbs(7 + x), convOrd(7 + y));
-    w.drawRect(convAbs(-5 + x), convOrd(10 + y), convAbs(-4 + x), convOrd(9 + y));
-    w.drawRect(convAbs(5 + x), convOrd(10 + y), convAbs(6 + x), convOrd(9 + y));
-    w.drawLine(convAbs(-2 + x), convOrd(12 + y), convAbs(3 + x), convOrd(12 + y));
-    w.drawLine(convAbs(-3 + x), convOrd(11 + y), convAbs(-2 + x), convOrd(11 + y));
-    w.drawLine(convAbs(3 + x), convOrd(11 + y), convAbs(4 + x), convOrd(11 + y));
-    w.drawLine(convAbs(-6 + x), convOrd(5 + y), convAbs(-1 + x), convOrd(10 + y));
-    w.drawLine(convAbs(2 + x), convOrd(10 + y), convAbs(7 + x), convOrd(5 + y));
-    w.drawLine(convAbs(-2 + x), convOrd(7 + y), convAbs(-1 + x), convOrd(6 + y));
-    w.drawLine(convAbs(3 + x), convOrd(7 + y), convAbs(2 + x), convOrd(6 + y));
-    w.drawLine(convAbs(0 + x), convOrd(6 + y), convAbs(1 + x), convOrd(6 + y));
-    w.drawLine(convAbs(0 + x), convOrd(10 + y), convAbs(1 + x), convOrd(10 + y));
+    w.drawLine(convAbs(x - 1), convOrd(y), convAbs(x + 2), convOrd(y));
+    w.drawLine(convAbs(x - 3), convOrd(y + 1), convAbs(x - 2), convOrd(y + 1));
+    w.drawLine(convAbs(x + 3), convOrd(y + 1), convAbs(x + 4), convOrd(y + 1));
+    w.drawLine(convAbs(x - 6), convOrd(y + 2), convAbs(x - 3), convOrd(y + 2));
+    w.drawLine(convAbs(x + 4), convOrd(y + 2), convAbs(x + 7), convOrd(y + 2));
+    w.drawPoint(convAbs(x - 6), convOrd(y + 3));
+    w.drawPoint(convAbs(x + 7), convOrd(y + 3));
+    w.drawLine(convAbs(x - 7), convOrd(y + 7), convAbs(x - 7), convOrd(y + 3));
+    w.drawLine(convAbs(x + 8), convOrd(y + 7), convAbs(x + 8), convOrd(y + 3));
+    w.drawLine(convAbs(x - 1), convOrd(y + 3), convAbs(x + 2), convOrd(y + 3));
+    w.drawLine(convAbs(x - 4), convOrd(y + 4), convAbs(x - 2), convOrd(y + 4));
+    w.drawLine(convAbs(x + 3), convOrd(y + 4), convAbs(x + 5), convOrd(y + 4));
+    w.drawPoint(convAbs(x - 5), convOrd(y + 5));
+    w.drawPoint(convAbs(x + 6), convOrd(y + 5));
+    w.drawPoint(convAbs(x - 2), convOrd(y + 5));
+    w.drawPoint(convAbs(x + 3), convOrd(y + 5));
+    w.drawLine(convAbs(x - 6), convOrd(y + 9), convAbs(x - 6), convOrd(y + 7));
+    w.drawLine(convAbs(x + 7), convOrd(y + 9), convAbs(x + 7), convOrd(y + 7));
+    w.drawRect(convAbs(x - 5), convOrd(y + 10), convAbs(x - 4), convOrd(y + 9));
+    w.drawRect(convAbs(x + 5), convOrd(y + 10), convAbs(x + 6), convOrd(y + 9));
+    w.drawLine(convAbs(x - 2), convOrd(y + 12), convAbs(x + 3), convOrd(y + 12));
+    w.drawLine(convAbs(x - 3), convOrd(y + 11), convAbs(x - 2), convOrd(y + 11));
+    w.drawLine(convAbs(x + 3), convOrd(y + 11), convAbs(x + 4), convOrd(y + 11));
+    w.drawLine(convAbs(x - 6), convOrd(y + 5), convAbs(x - 1), convOrd(y + 10));
+    w.drawLine(convAbs(x + 2), convOrd(y + 10), convAbs(x + 7), convOrd(y + 5));
+    w.drawLine(convAbs(x - 2), convOrd(y + 7), convAbs(x - 1), convOrd(y + 6));
+    w.drawLine(convAbs(x + 3), convOrd(y + 7), convAbs(x + 2), convOrd(y + 6));
+    w.drawLine(convAbs(x), convOrd(y + 6), convAbs(x + 1), convOrd(y + 6));
+    w.drawLine(convAbs(x), convOrd(y + 10), convAbs(x + 1), convOrd(y + 10));
 }
 
 void chatBowser(DrawingWindow &w) {
