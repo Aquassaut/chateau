@@ -171,83 +171,74 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
 }
 
 void chatBowser(DrawingWindow &w) {
-    int offHaut = w.height-70; //L'ordonnée la plus en haut pour dessiner les chateaux
-    int offDroite = 20; //L'abscisse des points les plus à droite du chateau
     //poutre
     w.setColor("darkgrey");
-    w.fillRect(offDroite+16, offHaut+00, offDroite+17, offHaut+14);
+    w.fillRect(convAbs(-284), convOrd(40), convAbs(-283), convOrd(26));
     //drapeau
     w.setColor("darkred");
-    w.fillTriangle(offDroite+15, offHaut+1,
-                   offDroite+11, offHaut+1,
-                   offDroite+15, offHaut+5);
+    w.fillTriangle(convAbs(-285), convOrd(39), convAbs(-289), convOrd(39), convAbs(-285), convOrd(35));
     //partie haute
     w.setColor("dimgray");
-    w.fillRect(offDroite+7, offHaut+12, offDroite+9, offHaut+27);
-    w.fillRect(offDroite+31, offHaut+12, offDroite+33, offHaut+27);
-    w.fillRect(offDroite+13, offHaut+12, offDroite+16, offHaut+14);
-    w.fillRect(offDroite+24, offHaut+12, offDroite+27, offHaut+14);
-    w.fillRect(offDroite+10, offHaut+15, offDroite+30, offHaut+37);
+    w.fillRect(convAbs(-293), convOrd(28), convAbs(-291), convOrd(13));
+    w.fillRect(convAbs(-269), convOrd(28), convAbs(-267), convOrd(13));
+    w.fillRect(convAbs(-287), convOrd(28), convAbs(-284), convOrd(26));
+    w.fillRect(convAbs(-276), convOrd(28), convAbs(-273), convOrd(26));
+    w.fillRect(convAbs(-290), convOrd(25), convAbs(-270), convOrd(3));
     //fenetres
     w.setColor("black");
-    w.drawPoint(offDroite+10, offHaut+16);
-    w.drawPoint(offDroite+30, offHaut+16);
-    w.drawPoint(offDroite+27, offHaut+18);
-    w.drawPoint(offDroite+13, offHaut+18);
-    w.drawLine(offDroite+11, offHaut+17, offDroite+12, offHaut+17);
-    w.drawLine(offDroite+28, offHaut+17, offDroite+29, offHaut+17);
-    w.drawLine(offDroite+12, offHaut+19, offDroite+13, offHaut+19);
-    w.drawLine(offDroite+27, offHaut+19, offDroite+28, offHaut+19);
-    w.drawLine(offDroite+11, offHaut+20, offDroite+14, offHaut+20);
-    w.drawLine(offDroite+26, offHaut+20, offDroite+29, offHaut+20);
-    w.fillRect(offDroite+10, offHaut+21, offDroite+15, offHaut+27);
-    w.fillRect(offDroite+25, offHaut+21, offDroite+30, offHaut+27);
+    w.drawPoint(convAbs(-290), convOrd(24));
+    w.drawPoint(convAbs(-270), convOrd(24));
+    w.drawPoint(convAbs(-273), convOrd(22));
+    w.drawPoint(convAbs(-287), convOrd(22));
+    w.drawLine(convAbs(-289), convOrd(23), convAbs(-288), convOrd(23));
+    w.drawLine(convAbs(-272), convOrd(23), convAbs(-271), convOrd(23));
+    w.drawLine(convAbs(-288), convOrd(21), convAbs(-287), convOrd(21));
+    w.drawLine(convAbs(-273), convOrd(21), convAbs(-272), convOrd(21));
+    w.drawLine(convAbs(-289), convOrd(20), convAbs(-286), convOrd(20));
+    w.drawLine(convAbs(-274), convOrd(20), convAbs(-271), convOrd(20));
+    w.fillRect(convAbs(-290), convOrd(19), convAbs(-285), convOrd(13));
+    w.fillRect(convAbs(-275), convOrd(19), convAbs(-270), convOrd(13));
     //partie basse
     w.setColor("darkgrey");
-    w.fillRect(offDroite+0, offHaut+25, offDroite+1, offHaut+27);
-    w.fillRect(offDroite+5, offHaut+25, offDroite+7, offHaut+27);
-    w.fillRect(offDroite+12, offHaut+25, offDroite+14, offHaut+27);
-    w.fillRect(offDroite+19, offHaut+24, offDroite+21, offHaut+27);
-    w.fillRect(offDroite+26, offHaut+25, offDroite+28, offHaut+27);
-    w.fillRect(offDroite+33, offHaut+25, offDroite+35, offHaut+27);
-    w.fillRect(offDroite+39, offHaut+25, offDroite+40, offHaut+27);
-    w.fillRect(offDroite+0, offHaut+28, offDroite+40, offHaut+39);
+    w.fillRect(convAbs(-300), convOrd(15), convAbs(-299), convOrd(13));
+    w.fillRect(convAbs(-295), convOrd(15), convAbs(-293), convOrd(13));
+    w.fillRect(convAbs(-288), convOrd(15), convAbs(-286), convOrd(13));
+    w.fillRect(convAbs(-281), convOrd(16), convAbs(-279), convOrd(13));
+    w.fillRect(convAbs(-274), convOrd(15), convAbs(-272), convOrd(13));
+    w.fillRect(convAbs(-267), convOrd(15), convAbs(-265), convOrd(13));
+    w.fillRect(convAbs(-261), convOrd(15), convAbs(-260), convOrd(13));
+    w.fillRect(convAbs(-300), convOrd(12), convAbs(-260), convOrd(1));
     //porte
     w.setColor("black");
-    w.drawPoint(offDroite+17, offHaut+33);
-    w.drawPoint(offDroite+20, offHaut+33);
-    w.drawPoint(offDroite+23, offHaut+33);
-    w.drawLine(offDroite+17, offHaut+34, offDroite+23, offHaut+34);
-    w.fillRect(offDroite+16, offHaut+35, offDroite+24, offHaut+39); 
+    w.drawPoint(convAbs(-283), convOrd(7));
+    w.drawPoint(convAbs(-280), convOrd(7));
+    w.drawPoint(convAbs(-277), convOrd(7));
+    w.drawLine(convAbs(-283), convOrd(6), convAbs(-277), convOrd(6));
+    w.fillRect(convAbs(-284), convOrd(5), convAbs(-276), convOrd(1));
 }
 
 void chatMario(DrawingWindow &w) {
-    int offHaut = w.height-70; //L'ordonnée la plus en haut pour dessiner les chateaux
-    int offDroite = w.width-60; //L'abscisse des points les plus à droite du chateau
-    //poteau
     w.setColor("darkgrey");
-    w.fillRect(offDroite+5, offHaut+0, offDroite+6, offHaut+35);
-    w.fillRect(offDroite+4, offHaut+36, offDroite+7, offHaut+39);
+    w.fillRect(convAbs(265), convOrd(40), convAbs(266), convOrd(5));
+    w.fillRect(convAbs(264), convOrd(4), convAbs(267), convOrd(1));
     //drapeau
     w.setColor("blue");
-    w.fillTriangle(offDroite+0, offHaut+1,
-                   offDroite+4, offHaut+1,
-                   offDroite+4, offHaut+5);
+    w.fillTriangle(convAbs(260), convOrd(39), convAbs(264), convOrd(39), convAbs(264), convOrd(35));
     //petits rectangles
     w.setColor("darkgrey");
-    w.fillRect(offDroite+10, offHaut+24, offDroite+40, offHaut+39);
-    w.fillRect(offDroite+16, offHaut+14, offDroite+34, offHaut+23);
-    w.fillRect(offDroite+10, offHaut+22, offDroite+13, offHaut+23);
-    w.fillRect(offDroite+37, offHaut+22, offDroite+40, offHaut+23);
-    w.fillRect(offDroite+16, offHaut+11, offDroite+20, offHaut+13);
-    w.fillRect(offDroite+23, offHaut+11, offDroite+27, offHaut+13);
-    w.fillRect(offDroite+30, offHaut+11, offDroite+34, offHaut+13);
+    w.fillRect(convAbs(270), convOrd(16), convAbs(300), convOrd(1));
+    w.fillRect(convAbs(276), convOrd(26), convAbs(294), convOrd(17));
+    w.fillRect(convAbs(270), convOrd(18), convAbs(273), convOrd(17));
+    w.fillRect(convAbs(297), convOrd(18), convAbs(300), convOrd(17));
+    w.fillRect(convAbs(276), convOrd(29), convAbs(280), convOrd(27));
+    w.fillRect(convAbs(283), convOrd(29), convAbs(287), convOrd(27));
+    w.fillRect(convAbs(290), convOrd(29), convAbs(294), convOrd(27));
     //fenetres
     w.setColor("black");
-    w.fillRect(offDroite+19, offHaut+18, offDroite+21, offHaut+24);
-    w.fillRect(offDroite+29, offHaut+18, offDroite+31, offHaut+24);
+    w.fillRect(convAbs(279), convOrd(22), convAbs(281), convOrd(16));
+    w.fillRect(convAbs(289), convOrd(22), convAbs(291), convOrd(16));
     //porte
-    w.fillRect(offDroite+22, offHaut+31, offDroite+28, offHaut+39);
+    w.fillRect(convAbs(282), convOrd(9), convAbs(288), convOrd(1));
 }
 
 
