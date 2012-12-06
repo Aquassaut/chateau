@@ -51,7 +51,7 @@ void nPosition(float[], float[], int, int);
 int checkCollision(float[], float[]);
 int convAbs(float);
 int convOrd(float);
-
+void tortue(DrawingWindow &w, float x, float y);
 
 /*BLOC NOTE
  * On a deux chateaux, un en (-p, 0), un en (p, 0)
@@ -115,7 +115,7 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     vitesse[0] = 1.5*force*cos(M_PI*angle/180);
     vitesse[1] = 1.5*force*sin(M_PI*angle/180);
     cout << "Les vitesses initiales sont " << vitesse[0] << " et " << vitesse[1] << endl;
-//    coord[1] = w.height-71; //ordonnée initialle : juste au dessus du drapeau
+    //    coord[1] = w.height-71; //ordonnée initialle : juste au dessus du drapeau
     coord[1] = 41;
     if (player == 1) {
         coord[0] = -w.width/2+38; //38; //juste à droite de l'abs du drapeau de Bowser
@@ -124,16 +124,17 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     else {
         coord[0] = w.width/2-55; //juste à gauche de l'abs du drapeau de Mario
     }
-    while(collision == 0) {
-        //dessin de la position
-        int couleurs = w.getPointColor(convAbs(coord[0]), convOrd(coord[1]));
-        w.setColor("black");
-        w.drawPoint(convAbs(coord[0]), convOrd(coord[1]));
-        //check de collision
+    while(collision <= 0) {
+        int couleurs;
         collision = checkCollision(coord, ventColHColL);
+        //dessin de la position
+        if(collision == 0)
+            couleurs = w.getPointColor(convAbs(coord[0]), convOrd(coord[1]));
+        tortue(w, coord[0], coord[1]);
+        //check de collision
         w.msleep(20);
         w.setColor(couleurs);
-        w.drawPoint(convAbs(coord[0]), convOrd(coord[1]));
+        //w.drawPoint(convAbs(coord[0]), convOrd(coord[1]));
         //calcul de la nouvelle position
         nPosition(coord, vitesse, vent, player);
         //attendre avant le prochain refresh
@@ -161,7 +162,7 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
     w.setColor("sienna");
     for (int x = 0; x <= ventColHColL[2]/2; x+=1) { //x
         for (int y = F_HAUT; y > 0; y-=1) { //y 
-            if ((ventColHColL[1]*(1-(2*x/ventColHColL[2])*(2*x/ventColHColL[2]))) > y) { 
+            if ((ventColHColL[1]*(1-pow(2*x/ventColHColL[2], 2))) > y) { 
                 w.drawLine(convAbs(x), convOrd(y), convAbs(x), convOrd(0));
                 w.drawLine(convAbs(-x), convOrd(y), convAbs(-x), convOrd(0));
                 y = 0; //next x
@@ -170,13 +171,61 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
     }
 }
 
+void tortue(DrawingWindow &w, float x, float y) {
+    //Le milieu de la carapace
+    w.setColor("darkgreen");
+    w.fillRect(convAbs(-3 + x), convOrd(11 + y), convAbs(4 + x), convOrd(9 + y));
+    w.fillRect(convAbs(-6 + x), convOrd(8 + y), convAbs(7 + x), convOrd(4 + y));
+    //Les cotes de la carapace
+    w.setColor("green");
+    w.fillRect(convAbs(-2 + x), convOrd(9 + y), convAbs(3 + x), convOrd(7 + y));
+    //le bas de la carapace
+    w.setColor("White");
+    w.fillRect(convAbs(-6 + x), convOrd(4 + y), convAbs(-2 + x), convOrd(2 + y));
+    w.fillRect(convAbs(3 + x), convOrd(4 + y), convAbs(7 + x), convOrd(2 + y));
+    w.fillRect(convAbs(-1 + x), convOrd(2 + y), convAbs(2 + x), convOrd(1 + y));
+    //les contours
+    w.setColor("black");
+    w.drawLine(convAbs(-1 + x), convOrd(0 + y), convAbs(2 + x), convOrd(0 + y));
+    w.drawLine(convAbs(-3 + x), convOrd(1 + y), convAbs(-2 + x), convOrd(1 + y));
+    w.drawLine(convAbs(3 + x), convOrd(1 + y), convAbs(4 + x), convOrd(1 + y));
+    w.drawLine(convAbs(-6 + x), convOrd(2 + y), convAbs(-3 + x), convOrd(2 + y));
+    w.drawLine(convAbs(4 + x), convOrd(2 + y), convAbs(7 + x), convOrd(2 + y));
+    w.drawPoint(convAbs(-6 + x), convOrd(3 + y));
+    w.drawPoint(convAbs(7 + x), convOrd(3 + y));
+    w.drawLine(convAbs(-7 + x), convOrd(7 + y), convAbs(-7 + x), convOrd(3 + y));
+    w.drawLine(convAbs(8 + x), convOrd(7 + y), convAbs(8 + x), convOrd(3 + y));
+    w.drawLine(convAbs(-1 + x), convOrd(3 + y), convAbs(2 + x), convOrd(3 + y));
+    w.drawLine(convAbs(-4 + x), convOrd(4 + y), convAbs(-2 + x), convOrd(4 + y));
+    w.drawLine(convAbs(3 + x), convOrd(4 + y), convAbs(5 + x), convOrd(4 + y));
+    w.drawPoint(convAbs(-5 + x), convOrd(5 + y));
+    w.drawPoint(convAbs(6 + x), convOrd(5 + y));
+    w.drawPoint(convAbs(-2 + x), convOrd(5 + y));
+    w.drawPoint(convAbs(3 + x), convOrd(5 + y));
+    w.drawLine(convAbs(-6 + x), convOrd(9 + y), convAbs(-6 + x), convOrd(7 + y));
+    w.drawLine(convAbs(7 + x), convOrd(9 + y), convAbs(7 + x), convOrd(7 + y));
+    w.drawRect(convAbs(-5 + x), convOrd(10 + y), convAbs(-4 + x), convOrd(9 + y));
+    w.drawRect(convAbs(5 + x), convOrd(10 + y), convAbs(6 + x), convOrd(9 + y));
+    w.drawLine(convAbs(-2 + x), convOrd(12 + y), convAbs(3 + x), convOrd(12 + y));
+    w.drawLine(convAbs(-3 + x), convOrd(11 + y), convAbs(-2 + x), convOrd(11 + y));
+    w.drawLine(convAbs(3 + x), convOrd(11 + y), convAbs(4 + x), convOrd(11 + y));
+    w.drawLine(convAbs(-6 + x), convOrd(5 + y), convAbs(-1 + x), convOrd(10 + y));
+    w.drawLine(convAbs(2 + x), convOrd(10 + y), convAbs(7 + x), convOrd(5 + y));
+    w.drawLine(convAbs(-2 + x), convOrd(7 + y), convAbs(-1 + x), convOrd(6 + y));
+    w.drawLine(convAbs(3 + x), convOrd(7 + y), convAbs(2 + x), convOrd(6 + y));
+    w.drawLine(convAbs(0 + x), convOrd(6 + y), convAbs(1 + x), convOrd(6 + y));
+    w.drawLine(convAbs(0 + x), convOrd(10 + y), convAbs(1 + x), convOrd(10 + y));
+}
+
 void chatBowser(DrawingWindow &w) {
     //poutre
     w.setColor("darkgrey");
     w.fillRect(convAbs(-284), convOrd(40), convAbs(-283), convOrd(26));
     //drapeau
     w.setColor("darkred");
-    w.fillTriangle(convAbs(-285), convOrd(39), convAbs(-289), convOrd(39), convAbs(-285), convOrd(35));
+    w.fillTriangle(convAbs(-285), convOrd(39),
+                    convAbs(-289), convOrd(39),
+                    convAbs(-285), convOrd(35));
     //partie haute
     w.setColor("dimgray");
     w.fillRect(convAbs(-293), convOrd(28), convAbs(-291), convOrd(13));
@@ -223,7 +272,9 @@ void chatMario(DrawingWindow &w) {
     w.fillRect(convAbs(264), convOrd(4), convAbs(267), convOrd(1));
     //drapeau
     w.setColor("blue");
-    w.fillTriangle(convAbs(260), convOrd(39), convAbs(264), convOrd(39), convAbs(264), convOrd(35));
+    w.fillTriangle(convAbs(260), convOrd(39), 
+                    convAbs(264), convOrd(39),
+                    convAbs(264), convOrd(35));
     //petits rectangles
     w.setColor("darkgrey");
     w.fillRect(convAbs(270), convOrd(16), convAbs(300), convOrd(1));
@@ -267,9 +318,9 @@ void nPosition(float p[], float v[], int vVent, int player) {
     }
     v[0] += (REFRESH * (-KFROT * (vr) * (v[0] - vVent)));
     v[1] += (REFRESH * (-KFROT * (vr) * v[1] - GRAV));
-    cout << "VR vaut : " << vr << endl; //DEBUG
-    cout << "Vitesse : " << v[0] << "," << v[1] << endl; //DEBUG
-    cout << "Pos : " << p[0] << "," << p[1] << endl; //DEBUG
+    //cout << "VR vaut : " << vr << endl; //DEBUG
+    //cout << "Vitesse : " << v[0] << "," << v[1] << endl; //DEBUG
+    //cout << "Pos : " << p[0] << "," << p[1] << endl; //DEBUG
 }
 
 
@@ -281,6 +332,7 @@ void nPosition(float p[], float v[], int vVent, int player) {
     *   collision chateau p1 : 2
     *   collision sol : 3
     *   collision colline : 4
+    *   hors de la fenêtre : -1
     *   
     *   TODO : ajouter de la précision et prise en compte de la modification de
     *   la hitbox après impact.
@@ -296,6 +348,9 @@ int checkCollision(float p[], float vCC[]) {
         col = 2;
     else if (p[0] >= 260 && p[0] <= 300 && p[1] <= 40) //70?
         col = 1;
+    else if (p[0] >= F_LARG/2 || p[0] <= -F_LARG/2 ||
+             p[1] <= -30 || p[1] >= F_HAUT-30)
+        col = -1;
     return col;
 }
 
@@ -304,10 +359,10 @@ int checkCollision(float p[], float vCC[]) {
      *  Reçoit la force du vent, la dessine dans la colline et la renvoie
      *  à la fonction mère.
      *
-     *  TODO: peut-être faire en sorte que la classe mère appèle la force du vent
-     *  et l'envoit à cette fonction pour la dessiner. C'est une fonction de dessin
-     *  pas la peine de lui faire faire trop de choses. et de copier 30 fois
-     *  la même variable par valeur.
+     *  TODO: peut-être faire en sorte que la classe mère appèle la force 
+     *  du vent et l'envoit à cette fonction pour la dessiner. C'est une 
+     *  fonction de dessin pas la peine de lui faire faire trop de choses.
+     *  Ni de copier 30 fois la même variable par valeur.
      */
 
 
