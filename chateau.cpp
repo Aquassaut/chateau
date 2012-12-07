@@ -52,23 +52,9 @@ int checkCollision(float[], float[]);
 int convAbs(float);
 int convOrd(float);
 void tortue(DrawingWindow &w, float x, float y);
-
-/*BLOC NOTE
- * On a deux chateaux, un en (-p, 0), un en (p, 0)
- * On a une colline au milieu, sa courbe vaut : y = randHauteur*(1-On a du vent pow((2x/randLargeur, 2)))
- * on a un vent de valeur random entre -ventMax et ventMax
- * Ca devrait être suivante pour savoir quelles variables locales on va devoir créer :
- * On aura donc une fonction qui va garder les variables locales, après création par des fonction spécifiques
- *
- * rand() donne un gros nombre, genre 9 chiffres
- *
- *
- */
-
-
-
-
-
+void coordInit(int p, float coord[]);
+void bufferCouleurs(int[16][13], float[], float[], DrawingWindow&);
+void effaceTortue(int[16][13], float[], DrawingWindow&);
 
 
 //Implémentation des fonctions
@@ -107,61 +93,61 @@ void fenetreDeJeu(DrawingWindow &w) {
     */
 
 int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
-    int vent = ventColHColL[0];
-    int angle, force, collision = 0;
-    float coord [2];
-    float vitesse [2];
+    int angle, force, collision = 0, preCoul[16][13];
+    float coord [2], vitesse [2];
     prompt(angle, force);
-    vitesse[0] = 1.5*force*cos(M_PI*angle/180);
-    vitesse[1] = 1.5*force*sin(M_PI*angle/180);
-    cout << "Les vitesses initiales sont " << vitesse[0] << " et " << vitesse[1] << endl;
-    //    coord[1] = w.height-71; //ordonnée initialle : juste au dessus du drapeau
-    coord[1] = 41;
-    if (player == 1) {
-        coord[0] = -w.width/2+38; //38; //juste à droite de l'abs du drapeau de Bowser
-    }
-    else {
-        coord[0] = w.width/2-55; //juste à gauche de l'abs du drapeau de Mario
-    }
-    int preCoul[16][13]; //Les couleurs précédentes 
-    float coordTortue[2];
+    vitesse[0] = 1.6*force*cos(M_PI*angle/180);
+    vitesse[1] = 1.6*force*sin(M_PI*angle/180);
+    coordInit(player, coord);
     while(collision == 0) {
         collision = checkCollision(coord, ventColHColL);
-        //dessin de la position
-        cout << "La collision vaut : " << collision << endl;
-        for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
-            for(int y = 0; y < 13; y += 1) {
-                coordTortue[0] = coord[0] + x - 7;
-                coordTortue[1] = coord[1] + y;
-                int collValide = checkCollision(coordTortue, ventColHColL);
-                if(collValide != -1)
-                    preCoul[x][y] = w.getPointColor(convAbs(coordTortue[0]), convOrd(coordTortue[1]));
-            }
-        }
-        
+        bufferCouleurs(preCoul, coord, ventColHColL, w);
         tortue(w, coord[0], coord[1]);
-        //check de collision
         w.msleep(15);
-        for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
-            for(int y = 0; y < 13; y += 1) {
-                coordTortue[0] = coord[0] + x - 7;
-                coordTortue[1] = coord[1] + y;
-                w.setColor(preCoul[x][y]);
-                w.drawPoint(convAbs(coordTortue[0]), convOrd(coordTortue[1]));
-                //w.drawCircle(convAbs(coordTortue[0]), convOrd(coordTortue[1]), 3);
-            }
-        }
-        //w.drawPoint(convAbs(coord[0]), convOrd(coord[1]));
-        //calcul de la nouvelle position
-        nPosition(coord, vitesse, vent, player);
-        //attendre avant le prochain refresh
-        //cout << "collision vaut : " << collision << endl;
+        effaceTortue(preCoul, coord, w);
+        nPosition(coord, vitesse, ventColHColL[0], player);
     } 
     return collision;
 }
 
 
+void effaceTortue(int couleurs[16][13], float coord[], DrawingWindow &w) {
+    float coordTortue[2];
+    for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
+        for(int y = 0; y < 13; y += 1) {
+            coordTortue[0] = coord[0] + x - 7;
+            coordTortue[1] = coord[1] + y;
+            w.setColor(couleurs[x][y]);
+            w.drawPoint(convAbs(coordTortue[0]), convOrd(coordTortue[1]));
+        }
+    }
+}
 
+
+void bufferCouleurs(int buffer[16][13], float coord[],
+                    float ventColHColL[], DrawingWindow &w) {
+    float coordTortue[2];
+    for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
+        for(int y = 0; y < 13; y += 1) {
+            coordTortue[0] = coord[0] + x - 7;
+            coordTortue[1] = coord[1] + y;
+            if(checkCollision(coordTortue, ventColHColL) != -1)
+                buffer[x][y] = w.getPointColor(convAbs(coordTortue[0]),
+                                                convOrd(coordTortue[1]));
+        }
+    }
+}
+
+
+void coordInit(int p, float coord[]) {
+    coord[1] = 41;
+    if (p == 1) {
+        coord[0] = -F_LARG/2+38; //juste à droite de l'abs du drapeau de Bowser
+    }
+    else {
+        coord[0] = F_LARG/2-55; //juste à gauche de l'abs du drapeau de Mario
+    }
+}
 
 void staticEnv(DrawingWindow &w, float ventColHColL[]) {
     w.setBgColor("lightcyan");
@@ -180,8 +166,8 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
     for (int x = 0; x <= ventColHColL[2]/2; x+=1) { //x
         for (int y = F_HAUT; y > 0; y-=1) { //y 
             if ((ventColHColL[1]*(1-pow(2*x/ventColHColL[2], 2))) > y) { 
-                w.drawLine(convAbs(x), convOrd(y), convAbs(x), convOrd(0));
-                w.drawLine(convAbs(-x), convOrd(y), convAbs(-x), convOrd(0));
+                w.drawLine(convAbs(x), convOrd(y), convAbs(x), convOrd(1));
+                w.drawLine(convAbs(-x), convOrd(y), convAbs(-x), convOrd(1));
                 y = 0; //next x
             }
         }
@@ -335,9 +321,6 @@ void nPosition(float p[], float v[], int vVent, int player) {
     }
     v[0] += (REFRESH * (-KFROT * (vr) * (v[0] - vVent)));
     v[1] += (REFRESH * (-KFROT * (vr) * v[1] - GRAV));
-    //cout << "VR vaut : " << vr << endl; //DEBUG
-    //cout << "Vitesse : " << v[0] << "," << v[1] << endl; //DEBUG
-    //cout << "Pos : " << p[0] << "," << p[1] << endl; //DEBUG
 }
 
 
@@ -357,8 +340,6 @@ void nPosition(float p[], float v[], int vVent, int player) {
 
 int checkCollision(float p[], float vCC[]) { 
     int col = 0;
-
-
     if (p[0] >= 260 && p[0] <= 300 && p[1] <= 40) //70?
         col = 1;
     else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 40) //70? //X entre 20 et 60 et y sous 70
@@ -370,7 +351,6 @@ int checkCollision(float p[], float vCC[]) {
     else if (p[0] >= F_LARG/2 || p[0] <= -F_LARG/2 ||
              p[1] <= -30 || p[1] >= F_HAUT-30)
         col = -1;
-
     return col;
 }
 
