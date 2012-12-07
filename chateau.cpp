@@ -124,21 +124,38 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     else {
         coord[0] = w.width/2-55; //juste à gauche de l'abs du drapeau de Mario
     }
+    int preCoul[16][12]; //Les couleurs précédentes 
+    float coordTortue[2];
     while(collision <= 0) {
-        int couleurs;
         collision = checkCollision(coord, ventColHColL);
         //dessin de la position
-        if(collision == 0)
-            couleurs = w.getPointColor(convAbs(coord[0]), convOrd(coord[1]));
+        for (int x = 0; x <= 16; x += 1) { //Pos min et max de x de la tortue
+            for(int y = 12; y >= 0; y -= 1) {
+                coordTortue[0] = coord[0] + x - 7;
+                coordTortue[1] = coord[1] + y + 1;
+                int collValide = checkCollision(coordTortue, ventColHColL);
+                if(collValide != -1)
+                    preCoul[x][y] = w.getPointColor(convAbs(coordTortue[0]), convOrd(coordTortue[1]));
+            }
+        }
+        //
         tortue(w, coord[0], coord[1]);
         //check de collision
-        w.msleep(20);
-        w.setColor(couleurs);
+        w.msleep(60);
+        for (int x = 0; x <= 16; x += 1) { //Pos min et max de x de la tortue
+            for(int y = 0; x <= 12; x += 1) {
+                coordTortue[0] = coord[0] + x - 7;
+                coordTortue[1] = coord[1] + y + 1;
+                w.setColor(preCoul[x][y]);
+                w.drawPoint(convAbs(coordTortue[0]), convOrd(coordTortue[1]));
+                //w.drawCircle(convAbs(coordTortue[0]), convOrd(coordTortue[1]), 3);
+            }
+        }
         //w.drawPoint(convAbs(coord[0]), convOrd(coord[1]));
         //calcul de la nouvelle position
         nPosition(coord, vitesse, vent, player);
         //attendre avant le prochain refresh
-        cout << "collision vaut : " << collision << endl;
+        //cout << "collision vaut : " << collision << endl;
     } 
     return collision;
 }
