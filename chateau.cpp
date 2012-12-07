@@ -24,7 +24,7 @@ using namespace std;
 //constantes
 #define GRAV 9.81
 #define KFROT 0.001
-#define REFRESH 0.05
+#define REFRESH 0.1
 #define VENT_MAX 10
 #define F_HAUT 480
 #define F_LARG 640
@@ -119,33 +119,33 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     coord[1] = 41;
     if (player == 1) {
         coord[0] = -w.width/2+38; //38; //juste à droite de l'abs du drapeau de Bowser
-
     }
     else {
         coord[0] = w.width/2-55; //juste à gauche de l'abs du drapeau de Mario
     }
-    int preCoul[16][12]; //Les couleurs précédentes 
+    int preCoul[16][13]; //Les couleurs précédentes 
     float coordTortue[2];
-    while(collision <= 0) {
+    while(collision == 0) {
         collision = checkCollision(coord, ventColHColL);
         //dessin de la position
-        for (int x = 0; x <= 16; x += 1) { //Pos min et max de x de la tortue
-            for(int y = 12; y >= 0; y -= 1) {
+        cout << "La collision vaut : " << collision << endl;
+        for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
+            for(int y = 0; y < 13; y += 1) {
                 coordTortue[0] = coord[0] + x - 7;
-                coordTortue[1] = coord[1] + y + 1;
+                coordTortue[1] = coord[1] + y;
                 int collValide = checkCollision(coordTortue, ventColHColL);
                 if(collValide != -1)
                     preCoul[x][y] = w.getPointColor(convAbs(coordTortue[0]), convOrd(coordTortue[1]));
             }
         }
-        //
+        
         tortue(w, coord[0], coord[1]);
         //check de collision
-        w.msleep(60);
-        for (int x = 0; x <= 16; x += 1) { //Pos min et max de x de la tortue
-            for(int y = 0; x <= 12; x += 1) {
+        w.msleep(15);
+        for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
+            for(int y = 0; y < 13; y += 1) {
                 coordTortue[0] = coord[0] + x - 7;
-                coordTortue[1] = coord[1] + y + 1;
+                coordTortue[1] = coord[1] + y;
                 w.setColor(preCoul[x][y]);
                 w.drawPoint(convAbs(coordTortue[0]), convOrd(coordTortue[1]));
                 //w.drawCircle(convAbs(coordTortue[0]), convOrd(coordTortue[1]), 3);
@@ -357,17 +357,20 @@ void nPosition(float p[], float v[], int vVent, int player) {
 
 int checkCollision(float p[], float vCC[]) { 
     int col = 0;
-    if (p[1] <= 0)
+
+
+    if (p[0] >= 260 && p[0] <= 300 && p[1] <= 40) //70?
+        col = 1;
+    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 40) //70? //X entre 20 et 60 et y sous 70
+        col = 2;
+    else if (p[1] <= 0)
         col = 3;
     else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]) //-31 ?
         col = 4;
-    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 40) //70? //X entre 20 et 60 et y sous 70
-        col = 2;
-    else if (p[0] >= 260 && p[0] <= 300 && p[1] <= 40) //70?
-        col = 1;
     else if (p[0] >= F_LARG/2 || p[0] <= -F_LARG/2 ||
              p[1] <= -30 || p[1] >= F_HAUT-30)
         col = -1;
+
     return col;
 }
 
