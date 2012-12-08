@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <math.h> //Pour la modélisation d'éléments physiques
 #include <string> 
+#include <sstream>
 #include <iostream>
 #include <DrawingWindow.h> //Bibliothèque graphique
 #include <cstdlib> //Pour générer un nombre pseudo-aléatoire
@@ -68,19 +69,26 @@ int main(int argc, char *argv[]) {
 }
 
 void fenetreDeJeu(DrawingWindow &w) {
-    int compteur = 1; // Son mod 2 donnera le numéro du joueur
-    float ventColHColL[3];
-    int collision = 0; //pourra faire sortir de la boucle en cas de victoire
-    staticEnv(w, ventColHColL); //Dessine l'environnement statique (bckg, colline, chateaux)
-    while(collision != 1 && collision != 2) {
-        compteur +=1;
-        cout << "A votre tour de joueur, Player " << compteur%2+1 << endl;
-        collision = playerMove(compteur%2+1, ventColHColL, w);
+    bool encore = true;
+    int comptePartie = 0;
+    while(encore) {
+        comptePartie += 1;
+        encore = false;
+        char reponse;
+        int compteur = 1, collision = 0; // Son mod 2 donnera le numéro du joueur
+        float ventColHColL[3];
+        staticEnv(w, ventColHColL); //Dessine l'environnement (bckg, colline, chateaux)
+        while(collision != 1 && collision != 2) {
+            compteur +=1;
+            cout << "A votre tour de joueur, Player " << compteur%2+1 << endl;
+            collision = playerMove(compteur%2+1, ventColHColL, w);
+        }
+        cout << "Player " << collision << " a gagné !" << endl;
+        cout << "Voulez vous rejouer ? (y/n)" << endl;
+        cin >> reponse;
+        if (reponse != 'n' && reponse != 'N')
+            encore = true;
     }
-    if(collision == 1)
-        cout << "Player 1 a gagné !" << endl;
-    else if(collision == 2)
-        cout << "Player 2 a gagné !" << endl;
 }
 
    /**
@@ -150,6 +158,8 @@ void coordInit(int p, float coord[]) {
 }
 
 void staticEnv(DrawingWindow &w, float ventColHColL[]) {
+    QFont maFont("trebuchet", 14);
+    w.setFont(maFont);
     w.setBgColor("lightcyan");
     w.clearGraph();
     srand(time(NULL)); //Initialise le random
@@ -177,7 +187,7 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
 void tortue(DrawingWindow &w, float x, float y) {
     //Le milieu de la carapace
     w.setColor("darkgreen");
-    w.fillRect(convAbs(x - 3), convOrd(y + 11), convAbs(x + 4), convOrd(y + 9));
+    w.fillRect(convAbs(x -3), convOrd(y + 11), convAbs(x + 4), convOrd(y + 9));
     w.fillRect(convAbs(x - 6), convOrd(y + 8), convAbs(x + 7), convOrd(y + 4));
     //Les cotes de la carapace
     w.setColor("green");
@@ -209,9 +219,9 @@ void tortue(DrawingWindow &w, float x, float y) {
     w.drawLine(convAbs(x + 7), convOrd(y + 9), convAbs(x + 7), convOrd(y + 7));
     w.drawRect(convAbs(x - 5), convOrd(y + 10), convAbs(x - 4), convOrd(y + 9));
     w.drawRect(convAbs(x + 5), convOrd(y + 10), convAbs(x + 6), convOrd(y + 9));
-    w.drawLine(convAbs(x - 2), convOrd(y + 12), convAbs(x + 3), convOrd(y + 12));
-    w.drawLine(convAbs(x - 3), convOrd(y + 11), convAbs(x - 2), convOrd(y + 11));
-    w.drawLine(convAbs(x + 3), convOrd(y + 11), convAbs(x + 4), convOrd(y + 11));
+    w.drawLine(convAbs(x -2), convOrd(y + 12), convAbs(x + 3), convOrd(y + 12));
+    w.drawLine(convAbs(x -3), convOrd(y + 11), convAbs(x - 2), convOrd(y + 11));
+    w.drawLine(convAbs(x +3), convOrd(y + 11), convAbs(x + 4), convOrd(y + 11));
     w.drawLine(convAbs(x - 6), convOrd(y + 5), convAbs(x - 1), convOrd(y + 10));
     w.drawLine(convAbs(x + 2), convOrd(y + 10), convAbs(x + 7), convOrd(y + 5));
     w.drawLine(convAbs(x - 2), convOrd(y + 7), convAbs(x - 1), convOrd(y + 6));
@@ -219,6 +229,10 @@ void tortue(DrawingWindow &w, float x, float y) {
     w.drawLine(convAbs(x), convOrd(y + 6), convAbs(x + 1), convOrd(y + 6));
     w.drawLine(convAbs(x), convOrd(y + 10), convAbs(x + 1), convOrd(y + 10));
 }
+
+    /**
+     *  Dessine le chateau de Bowser (utilisé par p1)
+     */
 
 void chatBowser(DrawingWindow &w) {
     //poutre
@@ -268,6 +282,11 @@ void chatBowser(DrawingWindow &w) {
     w.drawLine(convAbs(-283), convOrd(6), convAbs(-277), convOrd(6));
     w.fillRect(convAbs(-284), convOrd(5), convAbs(-276), convOrd(1));
 }
+
+
+    /**
+     * Dessine le chateau de mario (utilisé par p2)
+     */
 
 void chatMario(DrawingWindow &w) {
     w.setColor("darkgrey");
@@ -340,16 +359,16 @@ void nPosition(float p[], float v[], int vVent, int player) {
 
 int checkCollision(float p[], float vCC[]) { 
     int col = 0;
-    if (p[0] >= 260 && p[0] <= 300 && p[1] <= 40) //70?
+    if (p[0] >= 260 && p[0] <= 300 && p[1] <= 40) //chateau droite
         col = 1;
-    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 40) //70? //X entre 20 et 60 et y sous 70
+    else if (p[0] >= -300 && p[0] <= -260 && p[1] <= 40) //chateau gauche
         col = 2;
-    else if (p[1] <= 0)
+    else if (p[1] <= 0) //sol
         col = 3;
-    else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]) //-31 ?
+    else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]) //colline
         col = 4;
     else if (p[0] >= F_LARG/2 || p[0] <= -F_LARG/2 ||
-             p[1] <= -30 || p[1] >= F_HAUT-30)
+             p[1] <= -30 || p[1] >= F_HAUT-30) //sortie de fenêtre
         col = -1;
     return col;
 }
@@ -358,28 +377,29 @@ int checkCollision(float p[], float vCC[]) {
     /**
      *  Reçoit la force du vent, la dessine dans la colline et la renvoie
      *  à la fonction mère.
-     *
-     *  TODO: peut-être faire en sorte que la classe mère appèle la force 
-     *  du vent et l'envoit à cette fonction pour la dessiner. C'est une 
-     *  fonction de dessin pas la peine de lui faire faire trop de choses.
-     *  Ni de copier 30 fois la même variable par valeur.
      */
 
 
 float setUpVent(DrawingWindow &w) {
     float vent = ventRand();
+    int vG = abs((int)(vent/2));
+    stringstream messageVent;
+    messageVent << "vent : " << vent;
+    w.setColor("black");
+    w.drawText(convAbs(0), convOrd(-15), messageVent.str(), Qt::AlignCenter);
+
     cout << "le vent vaut : " << vent << endl; // DEBUG
     w.setColor("black");
     //Partie horizontale de la flèche sur 30 pixels
-    w.drawLine(w.width/2-15, w.height-60, w.width/2+15, w.height-60);
+    w.drawLine(convAbs(-15-vG), convOrd(30), convAbs(15+vG), convOrd(30));
     //Vent vers la gauche
     if (vent < 0) {
-        w.drawLine(w.width/2-15, w.height-60, w.width/2-10, w.height-65);
-        w.drawLine(w.width/2-15, w.height-60, w.width/2-10, w.height-55);
+        w.drawLine(convAbs(-15-vG), convOrd(30), convAbs(-10-vG), convOrd(35));
+        w.drawLine(convAbs(-15-vG), convOrd(30), convAbs(-10-vG), convOrd(25));
     }
     else {
-        w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-65);
-        w.drawLine(w.width/2+15, w.height-60, w.width/2+10, w.height-55);
+        w.drawLine(convAbs(15+vG), convOrd(30), convAbs(10+vG), convOrd(35));
+        w.drawLine(convAbs(15+vG), convOrd(30), convAbs(10+vG), convOrd(25));
     }
     return vent;
 }
@@ -423,6 +443,9 @@ void prompt(int& angle, int& force) {
 void barreBas(DrawingWindow& w) {
     w.setColor("darkslategrey");
     w.fillRect(convAbs(-F_LARG/2), convOrd(0), convAbs(F_LARG/2), convOrd(-30));
+    w.setColor("black");
+    w.drawText(convAbs(-278), convOrd(-15), "Joueur 1", Qt::AlignCenter);
+    w.drawText(convAbs(278), convOrd(-15), "Joueur 2", Qt::AlignCenter);
 }
 
 
@@ -436,8 +459,6 @@ void barreBas(DrawingWindow& w) {
 void collineRand(float& largeur, float& hauteur) {
     hauteur = HCOL_MIN + (rand() % (HCOL_MAX - HCOL_MIN));
     largeur = LCOL_MIN + (rand() % (LCOL_MAX - LCOL_MIN));
-    cout << "la hauteur de la colline vaut : " << hauteur << endl; //DEBUG
-    cout << "la largeur de la colline vaut : " << largeur << endl; //DEBUG
 }
 
 
