@@ -31,9 +31,9 @@ using namespace std;
 #define F_LARG 640
 
 
-#define HCOL_MIN 80
-#define HCOL_MAX 300
-#define LCOL_MIN 50
+#define HCOL_MIN 230
+#define HCOL_MAX 350
+#define LCOL_MIN 80
 #define LCOL_MAX 200
 
 //Prototypes des fonctions
@@ -70,20 +70,23 @@ int main(int argc, char *argv[]) {
 
 void fenetreDeJeu(DrawingWindow &w) {
     bool encore = true;
-    int comptePartie = 0;
+    int comptePartie = 0, compteJoueur = 1;
     while(encore) {
         comptePartie += 1;
         encore = false;
         char reponse;
-        int compteur = 1, collision = 0; // Son mod 2 donnera le numéro du joueur
+        int collision = 0; // Son mod 2 donnera le numéro du joueur
         float ventColHColL[3];
         staticEnv(w, ventColHColL); //Dessine l'environnement (bckg, colline, chateaux)
         while(collision != 1 && collision != 2) {
-            compteur +=1;
-            cout << "A votre tour de joueur, Player " << compteur%2+1 << endl;
-            collision = playerMove(compteur%2+1, ventColHColL, w);
+            compteJoueur +=1;
+            cout << "A votre tour de joueur, Joueur " << compteJoueur%2+1 << endl;
+            collision = playerMove(compteJoueur%2+1, ventColHColL, w);
         }
-        cout << "Player " << collision << " a gagné !" << endl;
+        if (collision != compteJoueur%2+1)
+            cout << "Joueur " << compteJoueur%2+1
+                 << " a mis fin à ses jours !" << endl;
+        cout << "Joueur " << collision << " a gagné !" << endl;
         cout << "Voulez vous rejouer ? (y/n)" << endl;
         cin >> reponse;
         if (reponse != 'n' && reponse != 'N')
@@ -107,7 +110,7 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     vitesse[0] = 1.6*force*cos(M_PI*angle/180);
     vitesse[1] = 1.6*force*sin(M_PI*angle/180);
     coordInit(player, coord);
-    while(collision == 0) {
+    while(collision == 0 || collision == -1) {
         collision = checkCollision(coord, ventColHColL);
         bufferCouleurs(preCoul, coord, ventColHColL, w);
         tortue(w, coord[0], coord[1]);
@@ -139,7 +142,7 @@ void bufferCouleurs(int buffer[16][13], float coord[],
         for(int y = 0; y < 13; y += 1) {
             coordTortue[0] = coord[0] + x - 7;
             coordTortue[1] = coord[1] + y;
-            if(checkCollision(coordTortue, ventColHColL) != -1)
+            if(checkCollision(coordTortue, ventColHColL) >= 0)
                 buffer[x][y] = w.getPointColor(convAbs(coordTortue[0]),
                                                 convOrd(coordTortue[1]));
         }
@@ -171,7 +174,7 @@ void staticEnv(DrawingWindow &w, float ventColHColL[]) {
 }
 
 void colline(DrawingWindow &w, float ventColHColL[]) {
-    collineRand(ventColHColL[1], ventColHColL[2]);
+    collineRand(ventColHColL[2], ventColHColL[1]);
     w.setColor("sienna");
     for (int x = 0; x <= ventColHColL[2]/2; x+=1) { //x
         for (int y = F_HAUT; y > 0; y-=1) { //y 
@@ -345,13 +348,16 @@ void nPosition(float p[], float v[], int vVent, int player) {
 
    /**
     *   renvoie un code collision selon le type de collision rencontré
-    *   Code collision :
-    *   Pas de collision : 0
-    *   collision chateau p2 : 1 
-    *   collision chateau p1 : 2
-    *   collision sol : 3
-    *   collision colline : 4
-    *   hors de la fenêtre : -1
+    *   Codes collision :
+    *   Pas de collision : _________________    0
+    *   collision chateau p2 : _____________    1 
+    *   collision chateau p1 : _____________    2
+    *   collision sol : ____________________    3
+    *   collision colline : ________________    4
+    *   hors de la fenêtre côté verticale :_   -1
+    *   hors de la fenêtre côté horizontale :  -2
+    *   hors de la fenêtre horizontale et
+    *   collision avec le sol (cas rare) :     -3
     *   
     *   TODO : ajouter de la précision et prise en compte de la modification de
     *   la hitbox après impact.
@@ -367,9 +373,16 @@ int checkCollision(float p[], float vCC[]) {
         col = 3;
     else if ((vCC[1]*(1-(2*p[0]/vCC[2])*(2*p[0]/vCC[2]))) > p[1]) //colline
         col = 4;
-    else if (p[0] >= F_LARG/2 || p[0] <= -F_LARG/2 ||
-             p[1] <= -30 || p[1] >= F_HAUT-30) //sortie de fenêtre
+    else if (p[1] <= -30 || p[1] >= F_HAUT-30)
         col = -1;
+
+    if (p[0] >= F_LARG/2 || p[0] <= -F_LARG/2) { //sortie de fenêtre
+        if (col == 0)
+            col = -2;
+        else
+            col *= -1;
+    }
+    //cout << "Les coordonnées sont " << p[0] << "," << p[1] << " et col : " << col << endl;
     return col;
 }
 
