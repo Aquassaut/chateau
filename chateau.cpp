@@ -30,7 +30,7 @@ using namespace std;
 #define LCOL_MIN 80
 #define LCOL_MAX 200
 
-//Prototypes des fonctions
+//Prototypes des fonctions.
 void fenetreDeJeu(DrawingWindow&);
 void staticEnv(DrawingWindow&, float[]);
 void barreBas(DrawingWindow&);
