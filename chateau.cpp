@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
 void fenetreDeJeu(DrawingWindow &w) {
     bool encore = true;
-    int comptePartie = 0, compteJoueur = 1;
+    int comptePartie = 0, compteJoueur = 1, winJ1 = 0, winJ2 = 0;
     while(encore) {
         comptePartie += 1;
         encore = false;
@@ -75,16 +75,23 @@ void fenetreDeJeu(DrawingWindow &w) {
         int collision = 0; // permettra de retrouver le numéro du joueur
         float ventColHColL[3];
         staticEnv(w, ventColHColL);
+        cout << "Manche n° " << comptePartie << "\nScores : " << endl;
+        cout << "Joueur 1 : " << winJ1 << "\nJoueur 2 : " << winJ2 << endl;
         while(collision != 1 && collision != 2) {
             compteJoueur +=1;
             cout << "A votre tour de joueur, Joueur "
                  << compteJoueur%2+1 << endl;
             collision = playerMove(compteJoueur%2+1, ventColHColL, w);
         }
-        if (collision != compteJoueur%2+1)
+        if (collision != compteJoueur%2+1) {
             cout << "Joueur " << compteJoueur%2+1
                  << " a mis fin à ses jours !" << endl;
+            }
         cout << "Joueur " << collision << " a gagné !" << endl;
+        if (collision == 1)
+            winJ1 += 1;
+        else
+            winJ2 +=1;
         cout << "Voulez vous rejouer ? (y/n)" << endl;
         cin >> reponse;
         if (reponse != 'n' && reponse != 'N')
@@ -245,11 +252,9 @@ float setUpVent(DrawingWindow &w) {
     float vent = ventRand();
     int vG = abs((int)(vent/2));
     stringstream messageVent;
-    messageVent << "vent : " << vent;
+    messageVent << "vent : " << (vent/VENT_MAX)*100 << "%";
     w.setColor("black");
     w.drawText(convAbs(0), convOrd(-15), messageVent.str(), Qt::AlignCenter);
-
-    cout << "le vent vaut : " << vent << endl; // DEBUG
     w.setColor("black");
     //Partie horizontale de la flèche sur 30 pixels
     w.drawLine(convAbs(-15-vG), convOrd(30), convAbs(15+vG), convOrd(30));
