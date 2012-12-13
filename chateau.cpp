@@ -32,7 +32,7 @@ using namespace std;
 
 //Prototypes des fonctions.
 void fenetreDeJeu(DrawingWindow&);
-void entreParties(DrawingWindow&, int, int, int);
+void entreParties(DrawingWindow&, int[], int, bool);
 void staticEnv(DrawingWindow&, float[]);
 void barreBas(DrawingWindow&);
 void colline(DrawingWindow&, float[]);
@@ -68,7 +68,8 @@ int main(int argc, char *argv[]) {
 
 void fenetreDeJeu(DrawingWindow &w) {
     bool encore = true;
-    int comptePartie = 0, compteJoueur = 1, winJ1 = 0, winJ2 = 0;
+    int comptePartie = 0, compteJoueur = 1;
+    int winJ1J2[2] = {0, 0};
     while(encore) {
         comptePartie += 1;
         encore = false;
@@ -76,25 +77,16 @@ void fenetreDeJeu(DrawingWindow &w) {
         int collision = 0;
         float ventColHColL[3];
         staticEnv(w, ventColHColL);
-        cout << "Manche n° " << comptePartie << "\nScores : " << endl;
-        cout << "Joueur 1 : " << winJ1 << "\nJoueur 2 : " << winJ2 << endl;
+        cout << "Manche n° " << comptePartie << endl;
         while(collision != 1 && collision != 2) {
-            if (compteJoueur - 1)
-                cout << "La précision n'était pas au rendez-vous" << endl;
             compteJoueur +=1;
             cout << "A votre tour de joueur, Joueur "
                  << compteJoueur%2+1 << endl;
             collision = playerMove(compteJoueur%2+1, ventColHColL, w);
+            if (collision != 1 && collision != 2)
+                cout << "La précision n'était pas au rendez-vous" << endl;
         }
-        if (collision != compteJoueur%2+1) {
-            cout << "Joueur " << compteJoueur%2+1
-                 << " a mis fin à ses jours !" << endl;
-            }
-        cout << "Joueur " << collision << " a gagné !" << endl;
-        if (collision == 1)
-            winJ1 += 1;
-        else
-            winJ2 +=1;
+        entreParties(w, winJ1J2, collision, (collision != compteJoueur%2+1));
         cout << "Voulez vous rejouer ? (y/n)" << endl;
         cin >> reponse;
         if (reponse != 'n' && reponse != 'N')
@@ -102,6 +94,27 @@ void fenetreDeJeu(DrawingWindow &w) {
     }
     
 }
+
+
+void entreParties(DrawingWindow &w, int winJ1J2[],
+                  int dernierWinner, bool suicide) {
+    if (suicide)
+        cout << "Joueur " << (dernierWinner % 2) + 1
+                 << " a mis fin à ses jours !" << endl;
+    cout << "Joueur " << dernierWinner << " a gagné !" << endl;
+    winJ1J2[dernierWinner-1] += 1;
+    stringstream score1, score2;
+    score1 << "Joueur 1\n" << winJ1J2[0];
+    score2 << "Joueur 2\n" << winJ1J2[1];
+    w.setColor("black");
+    w.drawText(convAbs(-F_LARG/4), convOrd(F_HAUT/2),
+               score1.str(), Qt::AlignCenter);
+    w.drawText(convAbs(F_LARG/4), convOrd(F_HAUT/2),
+               score2.str(), Qt::AlignCenter);
+
+}
+
+
 
     /**
      *  Met au point l'environnement statique, soit le fond, la barre du bas,
