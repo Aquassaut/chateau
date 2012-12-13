@@ -32,6 +32,7 @@ using namespace std;
 
 //Prototypes des fonctions.
 void fenetreDeJeu(DrawingWindow&);
+void entreParties(DrawingWindow&, int, int, int);
 void staticEnv(DrawingWindow&, float[]);
 void barreBas(DrawingWindow&);
 void colline(DrawingWindow&, float[]);
@@ -72,12 +73,14 @@ void fenetreDeJeu(DrawingWindow &w) {
         comptePartie += 1;
         encore = false;
         char reponse;
-        int collision = 0; // permettra de retrouver le numéro du joueur
+        int collision = 0;
         float ventColHColL[3];
         staticEnv(w, ventColHColL);
         cout << "Manche n° " << comptePartie << "\nScores : " << endl;
         cout << "Joueur 1 : " << winJ1 << "\nJoueur 2 : " << winJ2 << endl;
         while(collision != 1 && collision != 2) {
+            if (compteJoueur - 1)
+                cout << "La précision n'était pas au rendez-vous" << endl;
             compteJoueur +=1;
             cout << "A votre tour de joueur, Joueur "
                  << compteJoueur%2+1 << endl;
@@ -97,6 +100,7 @@ void fenetreDeJeu(DrawingWindow &w) {
         if (reponse != 'n' && reponse != 'N')
             encore = true;
     }
+    
 }
 
     /**
@@ -359,18 +363,22 @@ void coordInit(int p, float coord[]) {
    /**
     *   renvoie un code collision selon le type de collision rencontré
     *   Codes collision :
-    *   Pas de collision : _________________    0
-    *   collision chateau p2 : _____________    1 
-    *   collision chateau p1 : _____________    2
-    *   collision sol : ____________________    3
-    *   collision colline : ________________    4
-    *   hors de la fenêtre côté verticale :_   -1
-    *   hors de la fenêtre côté horizontale :  -2
+    *   Pas de collision : _____________________    0
+    *
+    *   collision chateau p2 : _________________    1 
+    *
+    *   collision chateau p1 : _________________    2
+    *
+    *   collision sol : ________________________    3
+    *
+    *   collision colline : ____________________    4
+    *
+    *   hors de la fenêtre côté verticale :_____   -1
+    *
+    *   hors de la fenêtre côté horizontale :___   -2
+    *
     *   hors de la fenêtre horizontale et
-    *   collision avec le sol (cas rare) :     -3
-    *   
-    *   TODO : ajouter de la précision et prise en compte de la
-    *   modification de la hitbox après impact.
+    *       collision avec le sol (cas rare) :__   -3
     */
 
 int checkCollision(float p[], float vCC[]) { 
@@ -389,8 +397,8 @@ int checkCollision(float p[], float vCC[]) {
     if (p[0] >= F_LARG/2 || p[0] <= -F_LARG/2) { //sortie de fenêtre
         if (col == 0)
             col = -2;
-        else
-            col *= -1;
+        else if (col == 3)
+            col = -3;
     }
     return col;
 }
