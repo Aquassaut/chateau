@@ -19,16 +19,16 @@
 using namespace std;
 
 //constantes
-#define GRAV 9.81
-#define KFROT 0.001
-#define REFRESH 0.1
-#define VENT_MAX 10
-#define F_HAUT 480
-#define F_LARG 640
-#define HCOL_MIN 230
-#define HCOL_MAX 350
-#define LCOL_MIN 80
-#define LCOL_MAX 200
+#define GRAV 9.81 //Constante gravitationelle
+#define KFROT 0.001 //Coefficient de frottement
+#define REFRESH 0.1 //Temps de calcul entre deux positions du projectiles 
+#define VENT_MAX 10 //Valeur max du vent
+#define F_HAUT 480  //hauteur de la fenêtre
+#define F_LARG 640 //largeur de la fenêtre
+#define HCOL_MIN 230 //Hauteur min de la colline
+#define HCOL_MAX 350 //Hauteur max de la colline
+#define LCOL_MIN 80 //Largeur min de la colline
+#define LCOL_MAX 200 //Largeur max de la colline
 
 //Prototypes des fonctions.
 void fenetreDeJeu(DrawingWindow&);
@@ -39,6 +39,9 @@ void colline(DrawingWindow&, float[]);
 void collineRand(float&, float&);
 void chatBowser(DrawingWindow&);
 void chatMario(DrawingWindow&);
+void questionBox(DrawingWindow&);
+void etoile(DrawingWindow&);
+void flamme(DrawingWindow&);
 float setUpVent(DrawingWindow&);
 float ventRand();
 int playerMove(int, float[], DrawingWindow&);
@@ -92,9 +95,13 @@ void fenetreDeJeu(DrawingWindow &w) {
         if (reponse != 'n' && reponse != 'N')
             encore = true;
     }
-    
+    w.closeGraph();
 }
 
+    /**
+     *  Annonce le vaiqueur, dessine le tableau de scores et
+     *  choisi l'image de fin à afficher
+     */
 
 void entreParties(DrawingWindow &w, int winJ1J2[],
                   int dernierWinner, bool suicide) {
@@ -107,14 +114,22 @@ void entreParties(DrawingWindow &w, int winJ1J2[],
     score1 << "Joueur 1\n" << winJ1J2[0];
     score2 << "Joueur 2\n" << winJ1J2[1];
     w.setColor("black");
-    w.drawText(convAbs(-F_LARG/4), convOrd(F_HAUT/2),
+    w.drawText(convAbs(-F_LARG/6-F_LARG/4), convOrd(F_HAUT/2),
                score1.str(), Qt::AlignCenter);
-    w.drawText(convAbs(F_LARG/4), convOrd(F_HAUT/2),
+    w.drawText(convAbs(F_LARG/6 + F_LARG/4), convOrd(F_HAUT/2),
                score2.str(), Qt::AlignCenter);
-
+    w.drawText(convAbs(0), convOrd(F_HAUT - 50),
+               "Gagnant de la partie :", Qt::AlignCenter);
+    questionBox(w);
+    if (dernierWinner == 1) {
+        flamme(w);
+        w.drawText(convAbs(0),convOrd(F_HAUT-180),"Joueur 1",Qt::AlignCenter);
+    }
+    else {
+        etoile(w);
+        w.drawText(convAbs(0),convOrd(F_HAUT-180),"Joueur 2",Qt::AlignCenter);
+    }
 }
-
-
 
     /**
      *  Met au point l'environnement statique, soit le fond, la barre du bas,
@@ -261,6 +276,160 @@ void chatMario(DrawingWindow &w) {
 }
 
     /**
+     *  Dessine la boite à point d'intérrogation qui s'efface pour
+     *  laisser place au symbole du joueur gagnant
+     */
+
+void questionBox(DrawingWindow &w) {
+    //fond orange
+    w.setColor("orange");
+    w.fillRect(convAbs(-42), convOrd(402), convAbs(42), convOrd(318));
+    //Point d'intérrogation
+    w.setColor("white");
+    w.fillRect(convAbs(-30), convOrd(384), convAbs(24), convOrd(372));
+    w.fillRect(convAbs(-18), convOrd(390), convAbs(24), convOrd(384));
+    w.fillRect(convAbs(6), convOrd(372), convAbs(24), convOrd(360));
+    w.fillRect(convAbs(-12), convOrd(366), convAbs(6), convOrd(354));
+    w.fillRect(convAbs(-12), convOrd(348), convAbs(6), convOrd(336));
+    //Bordures
+    w.setColor("gray");
+    w.fillRect(convAbs(-42), convOrd(408), convAbs(42), convOrd(402));
+    w.fillRect(convAbs(42), convOrd(402), convAbs(48), convOrd(318));
+    w.fillRect(convAbs(-42), convOrd(318), convAbs(42), convOrd(312));
+    w.fillRect(convAbs(-48), convOrd(402), convAbs(-42), convOrd(318));
+    w.fillRect(convAbs(-42), convOrd(402), convAbs(-36), convOrd(396));
+    w.fillRect(convAbs(-36), convOrd(396), convAbs(-30), convOrd(390));
+    w.fillRect(convAbs(30), convOrd(330), convAbs(36), convOrd(324));
+    w.fillRect(convAbs(36), convOrd(324), convAbs(42), convOrd(318));
+    w.fillRect(convAbs(36), convOrd(402), convAbs(42), convOrd(396));
+    w.fillRect(convAbs(30), convOrd(396), convAbs(36), convOrd(390));
+    w.fillRect(convAbs(-36), convOrd(330), convAbs(-30), convOrd(324));
+    w.fillRect(convAbs(-42), convOrd(324), convAbs(-36), convOrd(318));
+    //Ombre du point d'interrogation
+    w.fillRect(convAbs(-11), convOrd(378), convAbs(5), convOrd(372));
+    w.fillRect(convAbs(25), convOrd(378), convAbs(30), convOrd(360));
+    w.fillRect(convAbs(-24), convOrd(371), convAbs(-6), convOrd(367));
+    w.fillRect(convAbs(19), convOrd(366), convAbs(24), convOrd(354));
+    w.fillRect(convAbs(7), convOrd(360), convAbs(18), convOrd(354));
+    w.fillRect(convAbs(-5), convOrd(353), convAbs(12), convOrd(349));
+    w.fillRect(convAbs(-12), convOrd(336), convAbs(6), convOrd(330));
+    w.fillRect(convAbs(7), convOrd(342), convAbs(12), convOrd(330));
+    //Pause avant d'afficher le symbole du gagnant de la manche
+    w.setColor("orange");
+    w.sleep(2);
+    w.fillRect(convAbs(-42), convOrd(319), convAbs(42), convOrd(401));
+
+}
+
+    /**
+     *  Dessine l'étoile de Mario, pour l'afficher quand
+     *  Joueur 2 gagne
+     */
+
+void etoile(DrawingWindow &w) {
+    //intérieur de l'étoile
+    w.setColor("yellow");
+    w.fillRect(convAbs(-35), convOrd(380), convAbs(35), convOrd(365));
+    w.fillRect(convAbs(-10), convOrd(395), convAbs(10), convOrd(380));
+    w.fillRect(convAbs(-25), convOrd(365), convAbs(25), convOrd(335));
+    w.fillRect(convAbs(15), convOrd(340), convAbs(35), convOrd(325));
+    w.fillRect(convAbs(-35), convOrd(340), convAbs(-15), convOrd(325));
+    //contours et yeux
+    w.setColor("black");
+    w.fillRect(convAbs(-5), convOrd(400), convAbs(5), convOrd(395));
+    w.fillRect(convAbs(-10), convOrd(395), convAbs(-5), convOrd(385));
+    w.fillRect(convAbs(5), convOrd(395), convAbs(10), convOrd(385));
+    w.fillRect(convAbs(-15), convOrd(385), convAbs(-10), convOrd(375));
+    w.fillRect(convAbs(10), convOrd(385), convAbs(15), convOrd(375));
+    w.fillRect(convAbs(-35), convOrd(380), convAbs(-15), convOrd(375));
+    w.fillRect(convAbs(15), convOrd(380), convAbs(35), convOrd(375));
+    w.fillRect(convAbs(-40), convOrd(380), convAbs(-35), convOrd(370));
+    w.fillRect(convAbs(35), convOrd(380), convAbs(40), convOrd(370));
+    w.fillRect(convAbs(-35), convOrd(370), convAbs(-30), convOrd(365));
+    w.fillRect(convAbs(30), convOrd(370), convAbs(35), convOrd(365));
+    w.fillRect(convAbs(-30), convOrd(365), convAbs(-25), convOrd(360));
+    w.fillRect(convAbs(-25), convOrd(360), convAbs(-20), convOrd(350));
+    w.fillRect(convAbs(-30), convOrd(350), convAbs(-25), convOrd(340));
+    w.fillRect(convAbs(-35), convOrd(340), convAbs(-30), convOrd(330));
+    w.fillRect(convAbs(-40), convOrd(330), convAbs(-35), convOrd(320));
+    w.fillRect(convAbs(-35), convOrd(325), convAbs(-25), convOrd(320));
+    w.fillRect(convAbs(-25), convOrd(330), convAbs(-15), convOrd(325));
+    w.fillRect(convAbs(-15), convOrd(335), convAbs(-5), convOrd(330));
+    w.fillRect(convAbs(-5), convOrd(340), convAbs(5), convOrd(335));
+    w.fillRect(convAbs(5), convOrd(335), convAbs(15), convOrd(330));
+    w.fillRect(convAbs(15), convOrd(330), convAbs(25), convOrd(325));
+    w.fillRect(convAbs(25), convOrd(325), convAbs(35), convOrd(320));
+    w.fillRect(convAbs(35), convOrd(330), convAbs(40), convOrd(320));
+    w.fillRect(convAbs(30), convOrd(340), convAbs(35), convOrd(330));
+    w.fillRect(convAbs(25), convOrd(350), convAbs(30), convOrd(340));
+    w.fillRect(convAbs(20), convOrd(360), convAbs(25), convOrd(350));
+    w.fillRect(convAbs(25), convOrd(365), convAbs(30), convOrd(360));
+    w.fillRect(convAbs(-10), convOrd(370), convAbs(-5), convOrd(355));
+    w.fillRect(convAbs(5), convOrd(370), convAbs(10), convOrd(355));
+}
+
+    /**
+     *  Dessine la flamme de Bowser, pour l'afficher quand
+     *  Joueur 1 gagne
+     */
+
+void flamme(DrawingWindow &w) {
+    //Partie intérieure jaune
+    w.setColor("yellow");
+    w.fillRect(convAbs(-30), convOrd(390), convAbs(30), convOrd(335));
+    //contours oranges
+    w.setColor("orange");
+    w.fillRect(convAbs(-15), convOrd(395), convAbs(15), convOrd(390));
+    w.fillRect(convAbs(-5), convOrd(335), convAbs(5), convOrd(330));
+    w.fillRect(convAbs(-10), convOrd(340), convAbs(-5), convOrd(335));
+    w.fillRect(convAbs(5), convOrd(340), convAbs(10), convOrd(335));
+    w.fillRect(convAbs(-15), convOrd(350), convAbs(-10), convOrd(340));
+    w.fillRect(convAbs(10), convOrd(350), convAbs(15), convOrd(340));
+    w.fillRect(convAbs(-35), convOrd(375), convAbs(-30), convOrd(345));
+    w.fillRect(convAbs(30), convOrd(375), convAbs(35), convOrd(345));
+    w.fillRect(convAbs(-30), convOrd(345), convAbs(-25), convOrd(335));
+    w.fillRect(convAbs(-20), convOrd(345), convAbs(-15), convOrd(335));
+    w.fillRect(convAbs(-25), convOrd(340), convAbs(-20), convOrd(330));
+    w.fillRect(convAbs(15), convOrd(345), convAbs(20), convOrd(335));
+    w.fillRect(convAbs(25), convOrd(345), convAbs(30), convOrd(335));
+    w.fillRect(convAbs(20), convOrd(340), convAbs(25), convOrd(330));
+    w.fillRect(convAbs(-30), convOrd(385), convAbs(-25), convOrd(375));
+    w.fillRect(convAbs(-25), convOrd(390), convAbs(-15), convOrd(385));
+    w.fillRect(convAbs(15), convOrd(390), convAbs(25), convOrd(385));
+    w.fillRect(convAbs(25), convOrd(385), convAbs(30), convOrd(375));
+    //Partie la plus extérieure rouge
+    w.setColor("red");
+    w.fillRect(convAbs(-15), convOrd(400), convAbs(15), convOrd(395));
+    w.fillRect(convAbs(15), convOrd(395), convAbs(25), convOrd(390));
+    w.fillRect(convAbs(25), convOrd(390), convAbs(30), convOrd(385));
+    w.fillRect(convAbs(-25), convOrd(395), convAbs(-15), convOrd(390));
+    w.fillRect(convAbs(-30), convOrd(390), convAbs(-25), convOrd(385));
+    w.fillRect(convAbs(-15), convOrd(340), convAbs(-10), convOrd(335));
+    w.fillRect(convAbs(10), convOrd(340), convAbs(15), convOrd(335));
+    w.fillRect(convAbs(-35), convOrd(385), convAbs(-30), convOrd(375));
+    w.fillRect(convAbs(30), convOrd(385), convAbs(35), convOrd(375));
+    w.fillRect(convAbs(-40), convOrd(375), convAbs(-35), convOrd(340));
+    w.fillRect(convAbs(35), convOrd(375), convAbs(40), convOrd(340));
+    w.fillRect(convAbs(-35), convOrd(345), convAbs(-30), convOrd(335));
+    w.fillRect(convAbs(-35), convOrd(335), convAbs(-25), convOrd(330));
+    w.fillRect(convAbs(-30), convOrd(330), convAbs(-20), convOrd(325));
+    w.fillRect(convAbs(-20), convOrd(335), convAbs(-10), convOrd(330));
+    w.fillRect(convAbs(-10), convOrd(335), convAbs(-5), convOrd(325));
+    w.fillRect(convAbs(-5), convOrd(330), convAbs(5), convOrd(320));
+    w.fillRect(convAbs(5), convOrd(335), convAbs(10), convOrd(325));
+    w.fillRect(convAbs(10), convOrd(335), convAbs(20), convOrd(330));
+    w.fillRect(convAbs(20), convOrd(330), convAbs(30), convOrd(325));
+    w.fillRect(convAbs(25), convOrd(335), convAbs(35), convOrd(330));
+    w.fillRect(convAbs(30), convOrd(345), convAbs(35), convOrd(335));
+    //Yeux
+    w.setColor("black");
+    w.fillRect(convAbs(-15), convOrd(385), convAbs(-10), convOrd(360));
+    w.fillRect(convAbs(10), convOrd(385), convAbs(15), convOrd(360));
+    w.fillRect(convAbs(5), convOrd(380), convAbs(20), convOrd(365));
+    w.fillRect(convAbs(-20), convOrd(380), convAbs(-5), convOrd(365));
+}
+
+    /**
      *  Reçoit la force du vent, la dessine dans la colline et la renvoie
      *  à la fonction mère.
      */
@@ -314,8 +483,8 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     int angle, force, collision = 0, preCoul[16][13];
     float coord [2], vitesse [2];
     prompt(angle, force);
-    vitesse[0] = 1.6*force*cos(M_PI*angle/180);
-    vitesse[1] = 1.6*force*sin(M_PI*angle/180);
+    vitesse[0] = 1.7*force*cos(M_PI*angle/180);
+    vitesse[1] = 1.7*force*sin(M_PI*angle/180);
     coordInit(player, coord);
     while(collision == 0 || collision == -1) {
         collision = checkCollision(coord, ventColHColL);
