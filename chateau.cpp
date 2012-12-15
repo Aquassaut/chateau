@@ -65,9 +65,9 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-    /**
-     *  Met en place les parties
-     */
+/**
+ *  Met en place les parties
+ */
 
 void fenetreDeJeu(DrawingWindow &w) {
     bool encore = true; //Permet de sortir de la boucle de jeux
@@ -92,7 +92,7 @@ void fenetreDeJeu(DrawingWindow &w) {
             //même instruction sans condition, on utilise le modulo +1.
             //En effet, (0%2)+1 = 1 et (1%2)+1 = 2
             cout << "A votre tour de joueur, Joueur "
-                 << compteJoueur%2+1 << endl;
+                << compteJoueur%2+1 << endl;
             collision = playerMove(compteJoueur%2+1, ventColHColL, w);
             if (collision != 1 && collision != 2)
                 cout << "La précision n'était pas au rendez-vous" << endl;
@@ -109,16 +109,16 @@ void fenetreDeJeu(DrawingWindow &w) {
     w.closeGraph();
 }
 
-    /**
-     *  Annonce le vaiqueur, dessine le tableau de scores et
-     *  choisi l'image de fin à afficher
-     */
+/**
+ *  Annonce le vaiqueur, dessine le tableau de scores et
+ *  choisi l'image de fin à afficher
+ */
 
 void entreParties(DrawingWindow &w, int winJ1J2[],
-                  int dernierWinner, bool suicide) {
+        int dernierWinner, bool suicide) {
     if (suicide)
         cout << "Joueur " << (dernierWinner % 2) + 1
-                 << " a mis fin à ses jours !" << endl;
+            << " a mis fin à ses jours !" << endl;
     cout << "Joueur " << dernierWinner << " a gagné !" << endl;
     winJ1J2[dernierWinner-1] += 1;
     //Je n'ai trouvé que la méthode du stringstream pour concatenner une
@@ -128,11 +128,11 @@ void entreParties(DrawingWindow &w, int winJ1J2[],
     score2 << "Joueur 2\n" << winJ1J2[1];
     w.setColor("black");
     w.drawText(convAbs(-F_LARG/6-F_LARG/4), convOrd(F_HAUT/2),
-               score1.str(), Qt::AlignCenter);
+            score1.str(), Qt::AlignCenter);
     w.drawText(convAbs(F_LARG/6 + F_LARG/4), convOrd(F_HAUT/2),
-               score2.str(), Qt::AlignCenter);
+            score2.str(), Qt::AlignCenter);
     w.drawText(convAbs(0), convOrd(F_HAUT - 50),
-               "Gagnant de la partie :", Qt::AlignCenter);
+            "Gagnant de la partie :", Qt::AlignCenter);
     questionBox(w);
     if (dernierWinner == 1) {
         flamme(w);
@@ -144,10 +144,10 @@ void entreParties(DrawingWindow &w, int winJ1J2[],
     }
 }
 
-    /**
-     *  Met au point l'environnement statique, soit le fond, la barre du bas,
-     *  la colline, les chateaux et le vent.
-     */
+/**
+ *  Met au point l'environnement statique, soit le fond, la barre du bas,
+ *  la colline, les chateaux et le vent.
+ */
 
 void staticEnv(DrawingWindow &w, float ventColHColL[]) {
     QFont maFont("trebuchet", 14); //Font QT utilisée
@@ -162,29 +162,29 @@ void staticEnv(DrawingWindow &w, float ventColHColL[]) {
     ventColHColL[0] = setUpVent(w);
 }
 
-    /**
-     *  dessine la barre du bas/sol et y affiche les positions respectives
-     *  des deux joueurs
-     */
+/**
+ *  dessine la barre du bas/sol et y affiche les positions respectives
+ *  des deux joueurs
+ */
 
 void barreBas(DrawingWindow& w) {
     w.setColor(0xc84c0c);
     w.fillRect(convAbs(-F_LARG/2), convOrd(0),
-               convAbs(F_LARG/2), convOrd(-30));
+            convAbs(F_LARG/2), convOrd(-30));
     w.setColor("black");
     w.drawText(convAbs(-278), convOrd(-15), "Joueur 1", Qt::AlignCenter);
     w.drawText(convAbs(278), convOrd(-15), "Joueur 2", Qt::AlignCenter);
 }
 
-    /**
-     *  Dessine la colline parabolique au milieu de la fenêtre. Pour celà
-     *  on itère les abscisses du milieu, vers de la droite, jusqu'à la
-     *  moitié de la largeur totale de la colline. pour chaque abscisse, on
-     *  itère les ordonnées à partir de la hauteur maximale de la colline,
-     *  et au premier point trouvé correspondant à la parabole, on trace un
-     *  trait de couleur entre celui-ci et le point de même abscisse au
-     *  niveau du sol.
-     */
+/**
+ *  Dessine la colline parabolique au milieu de la fenêtre. Pour celà
+ *  on itère les abscisses du milieu, vers de la droite, jusqu'à la
+ *  moitié de la largeur totale de la colline. pour chaque abscisse, on
+ *  itère les ordonnées à partir de la hauteur maximale de la colline,
+ *  et au premier point trouvé correspondant à la parabole, on trace un
+ *  trait de couleur entre celui-ci et le point de même abscisse au
+ *  niveau du sol.
+ */
 
 void colline(DrawingWindow &w, float ventColHColL[]) {
     collineRand(ventColHColL[2], ventColHColL[1]);
@@ -200,21 +200,21 @@ void colline(DrawingWindow &w, float ventColHColL[]) {
     }
 }
 
-    /** 
-     *  On cherche à obtenir deux valeurs, entre la valeur min et
-     *  la valeur max. Pour ce faire on prend la valeur min et on 
-     *  lui ajoute une valeur dans la plage de valeurs disponible
-     *  (entre 0 et max - min) avec le modulo.
-     */
+/** 
+ *  On cherche à obtenir deux valeurs, entre la valeur min et
+ *  la valeur max. Pour ce faire on prend la valeur min et on 
+ *  lui ajoute une valeur dans la plage de valeurs disponible
+ *  (entre 0 et max - min) avec le modulo.
+ */
 
 void collineRand(float& largeur, float& hauteur) {
     hauteur = HCOL_MIN + (rand() % (HCOL_MAX - HCOL_MIN));
     largeur = LCOL_MIN + (rand() % (LCOL_MAX - LCOL_MIN));
 }
 
-    /**
-     *  Dessine le chateau de Bowser (utilisé par Joueur 1)
-     */
+/**
+ *  Dessine le chateau de Bowser (utilisé par Joueur 1)
+ */
 
 void chatBowser(DrawingWindow &w) {
     //poutre
@@ -223,8 +223,8 @@ void chatBowser(DrawingWindow &w) {
     //drapeau
     w.setColor("darkred");
     w.fillTriangle(convAbs(-285), convOrd(39),
-                    convAbs(-289), convOrd(39),
-                    convAbs(-285), convOrd(35));
+            convAbs(-289), convOrd(39),
+            convAbs(-285), convOrd(35));
     //partie haute
     w.setColor(0x474a46);
     w.fillRect(convAbs(-293), convOrd(28), convAbs(-291), convOrd(13));
@@ -265,9 +265,9 @@ void chatBowser(DrawingWindow &w) {
     w.fillRect(convAbs(-284), convOrd(5), convAbs(-276), convOrd(1));
 }
 
-    /**
-     * Dessine le chateau de mario (utilisé par Joueur 2)
-     */
+/**
+ * Dessine le chateau de mario (utilisé par Joueur 2)
+ */
 
 void chatMario(DrawingWindow &w) {
     w.setColor(0x6b696b);
@@ -276,8 +276,8 @@ void chatMario(DrawingWindow &w) {
     //drapeau
     w.setColor("blue");
     w.fillTriangle(convAbs(260), convOrd(39), 
-                    convAbs(264), convOrd(39),
-                    convAbs(264), convOrd(35));
+            convAbs(264), convOrd(39),
+            convAbs(264), convOrd(35));
     //petits rectangles
     w.setColor(0x6b696b);
     w.fillRect(convAbs(270), convOrd(16), convAbs(300), convOrd(1));
@@ -295,10 +295,10 @@ void chatMario(DrawingWindow &w) {
     w.fillRect(convAbs(282), convOrd(9), convAbs(288), convOrd(1));
 }
 
-    /**
-     *  Dessine la boite à point d'intérrogation qui s'efface pour
-     *  laisser place au symbole du joueur gagnant
-     */
+/**
+ *  Dessine la boite à point d'intérrogation qui s'efface pour
+ *  laisser place au symbole du joueur gagnant
+ */
 
 void questionBox(DrawingWindow &w) {
     //fond orange
@@ -341,10 +341,10 @@ void questionBox(DrawingWindow &w) {
 
 }
 
-    /**
-     *  Dessine l'étoile de Mario, pour l'afficher quand
-     *  Joueur 2 gagne
-     */
+/**
+ *  Dessine l'étoile de Mario, pour l'afficher quand
+ *  Joueur 2 gagne
+ */
 
 void etoile(DrawingWindow &w) {
     //intérieur de l'étoile
@@ -388,10 +388,10 @@ void etoile(DrawingWindow &w) {
     w.fillRect(convAbs(5), convOrd(370), convAbs(10), convOrd(355));
 }
 
-    /**
-     *  Dessine la flamme de Bowser, pour l'afficher quand
-     *  Joueur 1 gagne
-     */
+/**
+ *  Dessine la flamme de Bowser, pour l'afficher quand
+ *  Joueur 1 gagne
+ */
 
 void flamme(DrawingWindow &w) {
     //Partie intérieure jaune
@@ -449,11 +449,11 @@ void flamme(DrawingWindow &w) {
     w.fillRect(convAbs(-20), convOrd(380), convAbs(-5), convOrd(365));
 }
 
-    /**
-     *  Reçoit la force du vent, la dessine dans la colline, dessine une
-     *  flèche la représentant de façon relative à sa grandeur et la
-     *  renvoie à la fonction mère.
-     */
+/**
+ *  Reçoit la force du vent, la dessine dans la colline, dessine une
+ *  flèche la représentant de façon relative à sa grandeur et la
+ *  renvoie à la fonction mère.
+ */
 
 float setUpVent(DrawingWindow &w) {
     float vent = ventRand();
@@ -464,43 +464,43 @@ float setUpVent(DrawingWindow &w) {
     w.setColor("black");
     w.drawText(convAbs(0), convOrd(-15), messageVent.str(), Qt::AlignCenter);
     //Partie horizontale de la flèche sur 30+vent pixels
-    w.drawLine(convAbs(-10-4*vG), convOrd(30), convAbs(10+3*vG), convOrd(30));
+    w.drawLine(convAbs(-10-4*vG), convOrd(30), convAbs(10+4*vG), convOrd(30));
     //Vent vers la gauche
     if (vent < 0) {
         w.drawLine(convAbs(-10-4*vG), convOrd(30),
-                   convAbs(5-10-4*vG), convOrd(35));
+                convAbs(5-10-4*vG), convOrd(35));
         w.drawLine(convAbs(-10-4*vG), convOrd(30), 
-                   convAbs(5-10-4*vG), convOrd(25));
+                convAbs(5-10-4*vG), convOrd(25));
     }
     else {
         w.drawLine(convAbs(10+4*vG), convOrd(30),
-                   convAbs(-5+10+4*vG), convOrd(35));
+                convAbs(-5+10+4*vG), convOrd(35));
         w.drawLine(convAbs(10+4*vG), convOrd(30),
-                   convAbs(-5+10+4*vG), convOrd(25));
+                convAbs(-5+10+4*vG), convOrd(25));
     }
     return vent;
 }
 
-    /**
-     *  renvoie la force du vent, entre -VENT_MAX et VENT_MAX.
-     *  Cette force est calculée en prenant un nombre pseudo-aléatoire,
-     *  en calculant son modulo 100*VENT_MAX, en le divisant par 10 pour
-     *  avoir un nombre à virgule (afin d'obtenir une plus grande
-     *  fourchette de nombres. On le multiplie ensuite par -1 à la
-     *  puissance du nombre pseudo aléatoire afin de définit un signe
-     *  aléatoire.
-     */
+/**
+ *  renvoie la force du vent, entre -VENT_MAX et VENT_MAX.
+ *  Cette force est calculée en prenant un nombre pseudo-aléatoire,
+ *  en calculant son modulo 100*VENT_MAX, en le divisant par 10 pour
+ *  avoir un nombre à virgule (afin d'obtenir une plus grande
+ *  fourchette de nombres. On le multiplie ensuite par -1 à la
+ *  puissance du nombre pseudo aléatoire afin de définit un signe
+ *  aléatoire.
+ */
 
 float ventRand() {
     float vent = ((rand() % 100*VENT_MAX) * (pow(-1, rand()))/100);
     return vent;
 }
 
-   /**
-    *  Modélise un tour en faisant en sorte qu'à chaque lancer, les
-    *  collisions, les dessins des projectiles, l'effacement des projectiles
-    *  et les nouvelles positions soient prises en compte.
-    */
+/**
+ *  Modélise un tour en faisant en sorte qu'à chaque lancer, les
+ *  collisions, les dessins des projectiles, l'effacement des projectiles
+ *  et les nouvelles positions soient prises en compte.
+ */
 
 int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     //la matrice preCoul garde en mémoire les couleurs existantes avant de
@@ -525,14 +525,14 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
     return collision;
 }
 
-    /**
-     *  Demande à l'utilisateur d'entrer les valeurs pour l'angle
-     *  et la force du tir et effectue les tests nécessaires à la
-     *  stabilité du programme.
-     *
-     *  TODO : s'assurer que l'input est uniquement un ou plusieurs
-     *  chiffre. Pour l'instant, ça accepte les lettres
-     */
+/**
+ *  Demande à l'utilisateur d'entrer les valeurs pour l'angle
+ *  et la force du tir et effectue les tests nécessaires à la
+ *  stabilité du programme.
+ *
+ *  TODO : s'assurer que l'input est uniquement un ou plusieurs
+ *  chiffre. Pour l'instant, ça accepte les lettres
+ */
 
 void prompt(int& angle, int& force) {
     bool erreur = false;
@@ -558,10 +558,10 @@ void prompt(int& angle, int& force) {
     while(force > 100 || force < 0);
 }
 
-    /**
-     *  Met au point les coordonnées initiales des projectiles selon le
-     *  numéro du joueur, pour savoir à quel chateau il correspond.
-     */
+/**
+ *  Met au point les coordonnées initiales des projectiles selon le
+ *  numéro du joueur, pour savoir à quel chateau il correspond.
+ */
 
 void coordInit(int p, float coord[]) {
     coord[1] = 41;
@@ -573,19 +573,19 @@ void coordInit(int p, float coord[]) {
     }
 }
 
-   /**
-    *   renvoie un code collision selon le type de collision rencontré
-    *   Codes collision :
-    *   Pas de collision : _____________________    0
-    *   collision chateau p2 : _________________    1 
-    *   collision chateau p1 : _________________    2
-    *   collision sol : ________________________    3
-    *   collision colline : ____________________    4
-    *   hors de la fenêtre côté verticale :_____   -1
-    *   hors de la fenêtre côté horizontale :___   -2
-    *   hors de la fenêtre horizontale et
-    *       collision avec le sol (cas rare) :__   -3
-    */
+/**
+ *   renvoie un code collision selon le type de collision rencontré
+ *   Codes collision :
+ *   Pas de collision : _____________________    0
+ *   collision chateau p2 : _________________    1 
+ *   collision chateau p1 : _________________    2
+ *   collision sol : ________________________    3
+ *   collision colline : ____________________    4
+ *   hors de la fenêtre côté verticale :_____   -1
+ *   hors de la fenêtre côté horizontale :___   -2
+ *   hors de la fenêtre horizontale et
+ *       collision avec le sol (cas rare) :__   -3
+ */
 
 int checkCollision(float p[], float vCC[]) { 
     int col = 0;
@@ -609,13 +609,13 @@ int checkCollision(float p[], float vCC[]) {
     return col;
 }
 
-    /**
-     *  Met en mémoire les couleurs existantes avant/sous le dessin d'une
-     *  projectile pour pouvoir l'effacer par la suite de façon propre.
-     */
+/**
+ *  Met en mémoire les couleurs existantes avant/sous le dessin d'une
+ *  projectile pour pouvoir l'effacer par la suite de façon propre.
+ */
 
 void bufferCouleurs(int buffer[16][13], float coord[],
-                    float ventColHColL[], DrawingWindow &w) {
+        float ventColHColL[], DrawingWindow &w) {
     float coordTortue[2];
     for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
         for(int y = 0; y < 13; y += 1) {
@@ -623,15 +623,15 @@ void bufferCouleurs(int buffer[16][13], float coord[],
             coordTortue[1] = coord[1] + y;
             if(checkCollision(coordTortue, ventColHColL) >= 0)
                 buffer[x][y] = w.getPointColor(convAbs(coordTortue[0]),
-                                                convOrd(coordTortue[1]));
+                        convOrd(coordTortue[1]));
         }
     }
 }
 
-    /**
-     *  Dessine une carapace de tortue (projectile) au dessus et de part
-     *  et d'autre d'un point fourni en paramètres
-     */
+/**
+ *  Dessine une carapace de tortue (projectile) au dessus et de part
+ *  et d'autre d'un point fourni en paramètres
+ */
 
 void tortue(DrawingWindow &w, float point[]) {
     float x = point[0], y = point[1];
@@ -680,16 +680,16 @@ void tortue(DrawingWindow &w, float point[]) {
     w.drawLine(convAbs(x), convOrd(y+10), convAbs(x+1), convOrd(y+10));
 }
 
-    /**
-     *  Efface un projectile précédement dessiné.
-     */
+/**
+ *  Efface un projectile précédement dessiné.
+ */
 
 void effaceTortue(int couleurs[16][13], float coord[], DrawingWindow &w) {
     float coordTortue[2];
     for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
         for(int y = 0; y < 13; y += 1) {
-        //Le point déterminant du projectile est au milieu, 7 pixels à droite
-        //du point le plus à gauche balayé par la boucle.
+            //Le point déterminant du projectile est au milieu,
+            //7 pixels à droite du point le plus à gauche balayé par la boucle.
             coordTortue[0] = coord[0] + x - 7;
             coordTortue[1] = coord[1] + y;
             w.setColor(couleurs[x][y]);
@@ -698,16 +698,16 @@ void effaceTortue(int couleurs[16][13], float coord[], DrawingWindow &w) {
     }
 }
 
-    /**
-     *  Update des positions du projecile. La première étape consiste
-     *  à calculer Vr, qui necessite la connaissance de Vx et Vy, puis
-     *  mise à jour tour à tour des positions puis des vitesses pour la
-     *  prochaine itération. Le calcul de l'acceleration est calculée
-     *  directement dans la mise à jour des vitesse pour économiser une
-     *  variable.
-     *  La position en x et la prise en compte du vent dépendent du joueur
-     *  projettant le projectile.
-     */
+/**
+ *  Update des positions du projecile. La première étape consiste
+ *  à calculer Vr, qui necessite la connaissance de Vx et Vy, puis
+ *  mise à jour tour à tour des positions puis des vitesses pour la
+ *  prochaine itération. Le calcul de l'acceleration est calculée
+ *  directement dans la mise à jour des vitesse pour économiser une
+ *  variable.
+ *  La position en x et la prise en compte du vent dépendent du joueur
+ *  projettant le projectile.
+ */
 
 void nPosition(float p[], float v[], int vVent, int player) {
     float vr = sqrt(pow(v[0]-vVent, 2) + pow(v[1], 2));
@@ -727,21 +727,21 @@ void nPosition(float p[], float v[], int vVent, int player) {
     v[1] += (REFRESH * (-KFROT * (vr) * v[1] - GRAV));
 }
 
-    /**
-     *  Renvoie une abscisse utilisable par la bibliothèque graphique à
-     *  partir d'une abscisse d'un système dans lequel l'origine serait
-     *  au milieu de la colline, au niveau du sol.
-     */
+/**
+ *  Renvoie une abscisse utilisable par la bibliothèque graphique à
+ *  partir d'une abscisse d'un système dans lequel l'origine serait
+ *  au milieu de la colline, au niveau du sol.
+ */
 
 int convAbs(float abs) {
     return abs + F_LARG/2;
 }
 
-    /**
-     *  Renvoie une ordonnée utilisable par la bibliothèque graphique à
-     *  partir d'une ordonnée d'un système dans lequel l'origine serait
-     *  au milieu de la colline, au niveau du sol
-     */
+/**
+ *  Renvoie une ordonnée utilisable par la bibliothèque graphique à
+ *  partir d'une ordonnée d'un système dans lequel l'origine serait
+ *  au milieu de la colline, au niveau du sol
+ */
 
 int convOrd(float ord) {
     return F_HAUT - 30 - ord;
