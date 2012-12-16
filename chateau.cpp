@@ -534,9 +534,6 @@ int playerMove(int player, float ventColHColL[], DrawingWindow &w) {
  *  Demande à l'utilisateur d'entrer les valeurs pour l'angle
  *  et la force du tir et effectue les tests nécessaires à la
  *  stabilité du programme.
- *
- *  TODO : s'assurer que l'input est uniquement un ou plusieurs
- *  chiffre. Pour l'instant, ça accepte les lettres
  */
 
 void prompt(int& angle, int& force) {
@@ -546,21 +543,27 @@ void prompt(int& angle, int& force) {
         //On ne passera dans cette condition que si l'on a entré une
         //force invalide (c'est à dire après une première tentative
         //d'entrée de donnée infructueuse)
-        if (erreur)
+        if (erreur) {
             cout << "Cet angle n'est pas valide, recommencez" << endl;
+            cin.clear();
+            cin.ignore();
+        }
         cin >> angle;
         erreur = true;
     }
-    while(angle > 90 || angle < 0);
+    while(angle > 90 || angle <= 0);
     erreur = false;
     cout << "Entrez une force en pourcent" << endl;
     do {
-        if (erreur)
+        if (erreur) {
             cout << "Cette force n'est pas valide, recommencez" << endl;
+            cin.clear();
+            cin.ignore();
+        }
         cin >> force;
         erreur = true;
     }
-    while(force > 100 || force < 0);
+    while(force > 100 || force <= 0);
 }
 
 /**
