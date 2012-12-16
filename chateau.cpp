@@ -1,9 +1,8 @@
 /**
- * Projet d'algorithmique et programmation numero 1
- * "Jeu des châteaux"
+ *  Projet d'algorithmique et programmation numero 1
+ *  "Jeu des châteaux"
  * 
- * Jérémy Autran - S1A1
- * repo git privé : https://github.com/Aquassaut/chateau.git
+ *  Jérémy Autran - S1A1
  */
 
 //Partie include
@@ -32,7 +31,7 @@ using namespace std;
 
 //Prototypes des fonctions.
 void fenetreDeJeu(DrawingWindow&);
-void entreParties(DrawingWindow&, int[], int, bool);
+bool entreParties(DrawingWindow&, int[], int, bool);
 void staticEnv(DrawingWindow&, float[]);
 void barreBas(DrawingWindow&);
 void colline(DrawingWindow&, float[]);
@@ -76,7 +75,6 @@ void fenetreDeJeu(DrawingWindow &w) {
     while(encore) {
         comptePartie += 1; 
         encore = false; 
-        char reponse;
         //collision determinera quel joueur a gagné. Cette variable ne peut
         //pas être booléenne car elle ne prendrait pas en compte les cas
         //de suicide.
@@ -99,23 +97,28 @@ void fenetreDeJeu(DrawingWindow &w) {
         }
         //pour déterminer si il y a suicide, on évalue l'égalité ou la non
         //égalité du dernier joueur et du vainqueur
-        entreParties(w, winJ1J2, collision, (collision != compteJoueur%2+1));
-        cout << "Voulez vous rejouer ? (y/n)" << endl;
-        cin >> reponse;
-        if (reponse != 'n' && reponse != 'N')
-            encore = true;
+        encore = entreParties(w, winJ1J2,
+                collision, (collision != compteJoueur%2+1));
     }
     //fermeture propre de la fenêtre et du programme
+    w.setBgColor("red");
+    w.clearGraph(); //Actualise la couleur de fond
+    w.drawText(convAbs(0), convOrd((F_HAUT/2)-30),
+            "La princesse est dans un autre château !" , Qt::AlignCenter);
+    cout << "Fermeture du programme..." << endl;
+    w.sleep(4);
     w.closeGraph();
 }
 
 /**
- *  Annonce le vaiqueur, dessine le tableau de scores et
- *  choisi l'image de fin à afficher
+ *  Annonce le vainqueur, dessine le tableau de scores, choisi l'image
+ *  de fin à afficher et demande aux joueurs si ils veulent rejouer.
+ *  Cette réponse est renvoyée sous forme de booléen.
  */
 
-void entreParties(DrawingWindow &w, int winJ1J2[],
+bool entreParties(DrawingWindow &w, int winJ1J2[],
         int dernierWinner, bool suicide) {
+    char reponse;
     if (suicide)
         cout << "Joueur " << (dernierWinner % 2) + 1
             << " a mis fin à ses jours !" << endl;
@@ -142,6 +145,9 @@ void entreParties(DrawingWindow &w, int winJ1J2[],
         etoile(w);
         w.drawText(convAbs(0),convOrd(F_HAUT-180),"Joueur 2",Qt::AlignCenter);
     }
+    cout << "Voulez vous rejouer ? (y/n)" << endl;
+    cin >> reponse;
+    return reponse != 'n' && reponse != 'N';
 }
 
 /**
@@ -338,7 +344,6 @@ void questionBox(DrawingWindow &w) {
     w.setColor("orange");
     w.sleep(2);
     w.fillRect(convAbs(-42), convOrd(319), convAbs(42), convOrd(401));
-
 }
 
 /**
@@ -688,8 +693,8 @@ void effaceTortue(int couleurs[16][13], float coord[], DrawingWindow &w) {
     float coordTortue[2];
     for (int x = 0; x < 16; x += 1) { //Pos min et max de x de la tortue
         for(int y = 0; y < 13; y += 1) {
-            //Le point déterminant du projectile est au milieu,
-            //7 pixels à droite du point le plus à gauche balayé par la boucle.
+            //Le point déterminant du projectile est au milieu, 7 pixels
+            //à droite du point le plus à gauche balayé par la boucle.
             coordTortue[0] = coord[0] + x - 7;
             coordTortue[1] = coord[1] + y;
             w.setColor(couleurs[x][y]);
@@ -723,8 +728,8 @@ void nPosition(float p[], float v[], int vVent, int player) {
     //vr étant calculé au début, on peut se permettre de faire le calcul 
     //des nouvelles accélerations directement dans le calcul des nouvelles
     //vitesses
-    v[0] += (REFRESH * (-KFROT * (vr) * (v[0] - vVent)));
-    v[1] += (REFRESH * (-KFROT * (vr) * v[1] - GRAV));
+    v[0] += REFRESH * (-KFROT * vr * (v[0] - vVent));
+    v[1] += REFRESH * (-KFROT * vr * v[1] - GRAV);
 }
 
 /**
