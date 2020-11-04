@@ -5,3 +5,5 @@
  HEADERS += DrawingWindow.h
  SOURCES += DrawingWindow.cpp
  SOURCES += chateau.cpp        
+ QT += widgets
+

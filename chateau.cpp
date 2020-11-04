@@ -131,9 +131,9 @@ bool entreParties(DrawingWindow &w, int winJ1J2[],
     score2 << "Joueur 2\n" << winJ1J2[1];
     w.setColor("black");
     w.drawText(convAbs(-F_LARG/6-F_LARG/4), convOrd(F_HAUT/2),
-            score1.str(), Qt::AlignCenter);
+            score1.str().c_str(), Qt::AlignCenter);
     w.drawText(convAbs(F_LARG/6 + F_LARG/4), convOrd(F_HAUT/2),
-            score2.str(), Qt::AlignCenter);
+            score2.str().c_str(), Qt::AlignCenter);
     w.drawText(convAbs(0), convOrd(F_HAUT - 50),
             "Gagnant de la partie :", Qt::AlignCenter);
     questionBox(w);
@@ -467,7 +467,7 @@ float setUpVent(DrawingWindow &w) {
     stringstream messageVent;
     messageVent << "vent : " << (vent/VENT_MAX)*100 << "%";
     w.setColor("black");
-    w.drawText(convAbs(0), convOrd(-15), messageVent.str(), Qt::AlignCenter);
+    w.drawText(convAbs(0), convOrd(-15), messageVent.str().c_str(), Qt::AlignCenter);
     //Partie horizontale de la flèche sur 30+vent pixels
     w.drawLine(convAbs(-10-4*vG), convOrd(30), convAbs(10+4*vG), convOrd(30));
     //Vent vers la gauche
